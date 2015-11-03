@@ -1,7 +1,6 @@
 ####################
 # function:     sort.listss()
-# purpose:		Sorts a list of lists in ascending order. Verified working for numerical, binary, and alphabetical order, 
-#               though I'm still uncertain of the heriarchy cross type.
+# purpose:		Sorts a list of lists in ascending order.
 # parameters:	x:A list of lists. This function
 # Author:       Joshua Watson Oct 2015
 
