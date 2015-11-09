@@ -6,8 +6,9 @@
 #               bin:A two element vector comtaining numeric binary values. Default is c(-1,1).
 #               rev:reverse the order if true. Needed depending on the numbers chosen.
 # Author:       Joshua Watson Nov 2015
-# Dependancies: 
-
+# Dependancies: library(combinat)
+install.packages('combinat') #run the first time only to get the package on your computer
+library(combinat) 
 
 gen.bincomb <- function(n,bin=c(1,-1),rev=TRUE){
     lst <- lapply(numeric(n), function(x) bin)
