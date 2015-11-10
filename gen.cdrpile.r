@@ -2,7 +2,7 @@
 # function:     gen.cdrpile()
 # purpose:    	Generates a sorted list of the elements in the CDR strategic pile.
 #               Each S_n is placed before all combinations of +/- in binary order.
-# parameters:	n:The number of elements in the set G^n 
+# parameters:	n:The number     of elements in the set G^n 
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r; combinat
 #install.packages('combinat') #run the first time only to get the package on your computer

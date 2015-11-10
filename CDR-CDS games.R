@@ -15,7 +15,7 @@
 # Author:       Joshua Watson Oct 2015
 # Dependancies: listed at start of code
 
-install.packages('combinat'); install.packages('R.matlab') #run the first time only to get the package on your computer
+#install.packages('combinat'); install.packages('R.matlab') #run the first time only to get the package on your computer
 library(combinat) 
 library(R.matlab)
 
