@@ -1,6 +1,6 @@
 ####################
 # function:     gen.cdspile()
-# purpose:		Sorts a list of lists in ascending order.
+# purpose:		Generates a sorted list of the elements in the CDS strategic pile.
 # parameters:	n: number of elements
 # Author:       Joshua Watson Oct 2015
 # Dependancies: combinat

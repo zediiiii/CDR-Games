@@ -101,4 +101,3 @@ countcds <- function(l,r,pretty=TRUE,timed=TRUE,countgamestates=TRUE){
     }
     returnme
 }
-
