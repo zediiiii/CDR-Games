@@ -119,15 +119,3 @@ cdrindex <- function(gamestate){
     list<-gen.cdrpile(n)
     which(sapply(list, identical, gamestate ))
 }
-
-####################
-# function:     gen.matlab.r()
-# purpose:      Generate the matlab objects for indexing
-# parameters:   
-# Author:       Joshua Watson Nov 2015
-# Dependancies: library(combinat)
-# TODO:         
-
-filename <- paste("A", ".mat", sep="")
-writeMat(filename, A=x)
-
