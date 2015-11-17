@@ -17,9 +17,8 @@ source("sort.listss.r")
 library(combinat) 
 
 gen.cdspile <- function(n){
-    permn(n)->list.of.lists
-    list.of.lists[order(sapply(list.of.lists,'[[',1))]
-
+    permn(n)->x
+    x[ order( sapply(x, paste0, collapse=".")) ]
 }
 
 
@@ -37,8 +36,8 @@ gen.cdrpile <- function(n){
     #instantiate variables
     alt.list <-list()   
     
-    symset<-permn(n)
-    ordered.symset<-sort.listss(symset) #get list of sym_n elements and order it
+    
+    gen.cdspile(n)->ordered.symset #get list of sym_n elements and order it
     
     #Generate the binary sorted list mask
     gen.bincomb(n)->binlist
@@ -123,7 +122,7 @@ cdrindex <- function(gamestate){
 ####################
 # function:     sort.listss()
 # purpose:    	Sorts a list of lists in ascending order.
-# parameters:	x:A list of lists. This function
+# parameters:	x:A list of lists.
 # Author:       Joshua Watson Oct 2015
 
 sort.listss <- function(list){
@@ -131,3 +130,24 @@ sort.listss <- function(list){
     list.of.lists[order(sapply(list.of.lists,'[[',1))]
     
 }
+
+
+####################
+# function:     makecdrfiles()
+# purpose:      Create CDR data files seperated by space for each number and return for each 
+#               gamestate (list element) in a range from m to n elements per gamestate 
+# parameters:   m: the number of elements n in R^n for the first data file to be generated
+#               n: the number of elements m in R^m for the last data file to be generated 
+# Author:       Joshua Watson Nov 2015
+# Dependancies: library(combinat); sort.listss; gen.bincomb; gen.cdrpile
+
+makecdrfiles <- function(m,n){
+    
+    for(i in n:m){
+        gen.cdrpile(i)->temp
+        lapply(temp, write, paste("R^",i,".txt",sep=""), append=TRUE, ncolumns=length(x)) 
+    }
+
+}
+
+
