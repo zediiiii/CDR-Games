@@ -7,26 +7,26 @@
 # Author:       Joshua Watson & Alyssa Seidman 2015
 # Dependancies: none
 
-cdrpointers <- function(game){
+cdrpointers <- function(gamestate){
     poscount<-0
     pointerlist<-list()
     
-    for(i in 1:length(game)){  #Check for all positive or all negative
-        if(game[i]>0){
+    for(i in 1:length(gamestate)){  #Check for all positive or all negative
+        if(gamestate[i]>0){
             poscount<-(poscount+1)
         }
     }
-    if((poscount==length(game)) || (poscount==0)){
+    if((poscount==length(gamestate)) || (poscount==0)){
         print("No pointers.")
     }
     
-    for(i in 1:length(game)){
-        pointer<-game[i]
+    for(i in 1:length(gamestate)){
+        pointer<-gamestate[i]
         if(pointer>0){
-            for(j in 1:length(game)){
-                pointercheck<-game[j]
+            for(j in 1:length(gamestate)){
+                pointercheck<-gamestate[j]
                 if((pointercheck==-(pointer+1)) | (pointercheck==-(pointer-1))){
-                    pointerlist[[length(pointerlist)+1]] <- c(game[i],game[j])
+                    pointerlist[[length(pointerlist)+1]] <- c(gamestate[i],gamestate[j])
                 }
             }
         }
