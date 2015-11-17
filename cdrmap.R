@@ -20,8 +20,8 @@ cdrmap <- function(gamestate){
     }
     
         statelist[[(length(statelist)+1)]] <- gamestate   # add the first gamestate to the list of gamestates
-        namelist[[(length(namelist)+1)]]   <-Node$new(expression('R'[index]^length))
-        
+            namelist[[(length(namelist)+1)]]   <-Node$new(expression('R'[index]^length))
+
                                             # add the expression for the 
                                             # first gamestate node to the list of node name commands
     
