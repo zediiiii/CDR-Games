@@ -150,4 +150,20 @@ makecdrfiles <- function(m,n){
 
 }
 
+####################
+# function:     makecdsfiles()
+# purpose:      Create CDS data files seperated by space for each number and return for each 
+#               gamestate (list element) in a range from m to n elements per gamestate.
+# parameters:   m: the number of elements n in S^n for the first data file to be generated
+#               n: the number of elements m in S^m for the last data file to be generated 
+# Author:       Joshua Watson Nov 2015
+# Dependancies: library(combinat); sort.listss; gen.bincomb; gen.cdrpile
 
+makecdsfiles <- function(m,n){
+    
+    for(i in n:m){
+        gen.cdspile(i)->temp
+        lapply(temp, write, paste("S^",i,".txt",sep=""), append=TRUE, ncolumns=length(x)) 
+    }
+    
+}

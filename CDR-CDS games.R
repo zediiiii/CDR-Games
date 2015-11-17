@@ -1,8 +1,8 @@
 
 
 ####################
-# function:   	countcds()
-# purpose:		Generate and count all possible gamestates and moves for CDS games with l through
+# function:   	countscds()
+# purpose:		Generate and count all possible gamestates and moves for SCDS games with l through
 #               r elements
 #               Only returns reasonable values for n>3 - takes several minutes for values of n>10
 # parameters:	l:Starting number of elements inclusive - must be <=r  (natural number),
@@ -13,12 +13,10 @@
 #               Example:countcdr(3,5,pretty=F) returns a named list with the total number of 
 #                       states and moves possible for sets of 1 to 3,4,5 along with exectution time.
 # Author:       Joshua Watson Oct 2015
-# Dependancies: listed at start of code
+# Dependancies: combinat
 
 #install.packages('combinat'); install.packages('R.matlab') #run the first time only to get the package on your computer
 library(combinat) 
-library(R.matlab)
-
 
 countcds <- function(l,r,pretty=TRUE,timed=TRUE,countgamestates=TRUE){
     
