@@ -1,0 +1,110 @@
+public class GameMethods {
+
+	
+	/**
+	 * This code checks to see if there are any possible moves by checking to see if all of the numbers in the game state are one sign
+	 * 
+	 */
+	public static int block1;
+	public static int block2;
+	
+	private static boolean OneSign(int n, int[] perm) {
+		int[] gameState = perm;
+		int neg = 0;
+		int pos = 0;
+		int all = n;
+		for (int i = 0; i < gameState.length; i++) {
+			if (gameState[i] > 0) {
+				pos++;
+			}
+			else if (gameState[i] < 0) {
+				neg++;
+			}
+		}
+		if (pos == all || neg == all) {
+			return true;
+		}
+		else return false;
+		
+	}
+	
+	/**
+	 * This game checks to see if any pointers exist and creates a list of all possible nodes 
+	 * @param perm
+	 * @return
+	 */
+	private static boolean PointerCheck(int[] perm) {
+		int[] game = perm;
+		int numPointers = 0;
+		for (int i = 0; i < game.length; i++) {
+		int pointer = game[i];
+			if (pointer > 0) {
+				for (int j = 0; j < game.length; j++) {
+					int pointerCheck = game[j];
+					if (pointerCheck == -(pointer + 1) || pointerCheck == -(pointer - 1)) {
+						System.out.println("There is a pointer between " + game[i] + " and " + game[j]);
+						if (i < j) {
+							block1 = i+1;
+							block2 = j;
+						}
+						else if (i > j) {
+							block1 = j;
+							block2 = i-1;
+						}
+						MoveMaker(game);
+						
+						numPointers++;
+					}
+					
+				}
+			}
+		}
+				
+		if (numPointers > 0) {
+			return true;
+		}
+		else 
+			{ 
+			System.out.println("Game over.");
+			return false;
+			}
+	}
+	
+	
+	/**
+	 * This code will make a valid CDR move
+	 * @param perm
+	 */
+	private static void MoveMaker(int[] perm) {
+		int[] game = perm;
+		int blockSize = block2 - block1 + 1;
+		int[] temp = new int[game.length];
+		int[] rotationBlock = new int[game.length];
+		
+		for (int i = block2-1; i > block1; i--) {
+			temp[i] = game[i];
+		}
+		
+		for (int j = 0; j < game.length-1; j++) {
+			rotationBlock[j] = -1*game[game.length-j-1];
+		}
+		
+		for (int k = block1; k < game.length; k++) {
+			game[k] = rotationBlock[k-1];
+		}
+		
+		
+		for (int r = 0; r < temp.length; r++) {
+			System.out.print(game[r]);
+		}
+
+}
+
+	
+	
+	public static void main(String[] args) {
+		int[] gameState = {1, -3, 4, -2};
+		
+		PointerCheck(gameState);
+	}
+}
