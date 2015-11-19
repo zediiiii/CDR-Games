@@ -110,3 +110,31 @@ dev.off() #dont forget to close the device
 #using superscripts in trees
 nam <- paste("step", j, sep = "")
 assign(nam, Node$new(expression('R'[length]^index)))
+
+
+
+
+
+
+# gdata helps read .xls files
+require(gdata)
+
+# tikzDevice will export the plots as a .tex file
+require(tikzDevice)
+
+# choose a name and path for the .tex file
+# folder should be the same as where your latex document resides
+tikz( 'plot_with_line.tex' )
+
+plot(df, xlab = "$\\alpha_t + \\hat{\\beta}X_t$", ylab = "$Y_t$",
+     main = "$Y_t = \\alpha_t + \\hat{\\beta}X_t$")
+abline(h = mean(df[,2]), col = "red", lwd = 2)
+
+dev.off()                   # must turn device off to complete .tex file
+
+
+get_model = function(model_name) {
+    my_probs <- testPred[[model_name]]$Y1
+    return(roc(Ytst, my_probs))
+}
+model_list = lapply(names(my_models), get_model)
