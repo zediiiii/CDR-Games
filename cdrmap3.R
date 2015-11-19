@@ -27,7 +27,6 @@ ass<- function(child,parent){
     #df$nam <-a
 }
 
-
 i=0
 
 ass<- function(child,parent,varname){
