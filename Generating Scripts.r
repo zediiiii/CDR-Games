@@ -1,20 +1,10 @@
-
-# All script dependancies are declared per script, but also inserted here for convenience
-#install.packages('combinat'); #run the first time only to get the package on your computer
-
-library(combinat) 
-source("gen.bincomb.r")
-source("sort.listss.r")
-
 ####################
 # function:     gen.cdspile()
 # purpose:		Generates a sorted list of the elements in the CDS strategic pile.
 # parameters:	n: number of elements
 # Author:       Joshua Watson Oct 2015
-# Dependancies: combinat
 
-
-library(combinat) 
+require(combinat) 
 
 gen.cdspile <- function(n){
     permn(n)->x
@@ -29,13 +19,12 @@ gen.cdspile <- function(n){
 # parameters:	n:The number     of elements in the set G^n 
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r; combinat
-#install.packages('combinat') #run the first time only to get the package on your computer
+require(combinat)
 
 gen.cdrpile <- function(n){
     
     #instantiate variables
     alt.list <-list()   
-    
     
     gen.cdspile(n)->ordered.symset #get list of sym_n elements and order it
     
@@ -50,12 +39,10 @@ gen.cdrpile <- function(n){
             temp<-binlist[[i]]*k
             alt.list[[length(alt.list)+1]] <- temp
         }
-        
-        
+    
     }
     alt.list
 }
-
 
 ####################
 # function:     gen.bincomb()
@@ -65,8 +52,7 @@ gen.cdrpile <- function(n){
 #               bin:A two element vector comtaining numeric binary values. Default is c(-1,1).
 #               rev:reverse the order if true. Needed depending on the numbers chosen.
 # Author:       Joshua Watson Nov 2015
-# Dependancies: library(combinat)
-
+require(combinat)
 
 gen.bincomb <- function(n,bin=c(1,-1),rev=TRUE){
     lst <- lapply(numeric(n), function(x) bin)
@@ -154,7 +140,6 @@ makecdsfiles <- function(m,n){
     }
     
 }
-
 
 ####################
 # function:     cdrmove()
