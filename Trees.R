@@ -146,3 +146,10 @@ mylist <- list()
 for (key in my_keys){ 
     mylist[[ key ]] <- value # value is computed dynamically
 }
+
+
+
+##works to generate tree from node structure a
+
+temp <- ToDataFrameNetwork(a, "name")
+simpleNetwork(temp[-3], fontSize = 26)

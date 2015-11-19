@@ -1,6 +1,12 @@
 ## Function to apply to nodes to create children
 nodeNamer <- function() {
     i <- 0
+    function(node) sprintf("%s -> %g", node$name, (i <<- i+1))
+}
+
+
+nodeNamer <- function() {
+    i <- 0
     function(parentnode) sprintf("%s -> %g", parentnode$name, (i <<- i+1))
 }
 

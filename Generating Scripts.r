@@ -216,8 +216,7 @@ cdrpointers <- function(gamestate){
         }
     }
     if((poscount==length(gamestate)) || (poscount==0)){
-        print("No pointers.")
-        break
+        return(list())
     }
     
     for(i in 1:length(gamestate)){
