@@ -7,7 +7,6 @@
 # Dependancies: 
 
 cdrmap <- function(gamestate){
-    #vars<-paste("a",c(1:(2^length(gamestate)*factorial(length(gamestate))))) #get a list big enough to name them all
     statelist<-list()
     namelist <-list()
     k=0
