@@ -133,8 +133,16 @@ abline(h = mean(df[,2]), col = "red", lwd = 2)
 dev.off()                   # must turn device off to complete .tex file
 
 
-get_model = function(model_name) {
+###################################
+get_model <- function(model_name) {
     my_probs <- testPred[[model_name]]$Y1
     return(roc(Ytst, my_probs))
 }
-model_list = lapply(names(my_models), get_model)
+model_list <- lapply(names(x), get_model)
+
+##############
+mylist <- list()
+
+for (key in my_keys){ 
+    mylist[[ key ]] <- value # value is computed dynamically
+}
