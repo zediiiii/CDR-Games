@@ -120,19 +120,6 @@ cdrindex <- function(gamestate){
 }
 
 ####################
-# function:     sort.listss()
-# purpose:    	Sorts a list of lists in ascending order.
-# parameters:	x:A list of lists.
-# Author:       Joshua Watson Oct 2015
-
-sort.listss <- function(list){
-    list->list.of.lists    
-    list.of.lists[order(sapply(list.of.lists,'[[',1))]
-    
-}
-
-
-####################
 # function:     makecdrfiles()
 # purpose:      Create CDR data files seperated by space for each number and return for each 
 #               gamestate (list element) in a range from m to n elements per gamestate 
@@ -201,13 +188,23 @@ cdrmove <- function(gamestate,pointer){
         } #end else
         
     } else {
-        if(p1<p2){  #ie, if p1 is left of p2 not adjacent
-            block<-c((p1+1):p2)
-        } else {    #ie p1 is right of p2 not adjacent
-            block<-c((p2:p1-1))
+        if(p1<p2){
+            if(abs(gamestate[p1]<abs(gamestate[p2]))){
+                block<-c((p1+1):p2)
+            } else {
+                block<-c(p1:(p2-1))
+                }  #ie, if p1 is left of p2 not adjacent
+        } else {
+        if(p1>p2){
+            if(abs(gamestate[p1]<abs(gamestate[p2]))){
+                block<-c((p2+1):p1)
+            } else {
+                block<-c(p2:(p1-1))
+                }
         } #end else
-    } #end else
-    
+            } #end else
+        } #end else
+
     #### Performs the flip and negation and overwrites block index elements with new neg.block ####
     neg.block<-rev(gamestate[block])*-1
     new.gamestate<-gamestate
