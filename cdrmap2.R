@@ -25,6 +25,8 @@ make_tree <- function(root) { #let pointer length determine m
     
     }
     
+    
+    
     f(root, depth)
     return( root )
 }
