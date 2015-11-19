@@ -174,13 +174,13 @@ cdrmove <- function(gamestate,pointer){
     
     if(abs(p1-p2)==1){ #ie the two numbers are adjacent
         if(p1<p2){ #ie p1 is left of p2
-            if(abs(gamestate[p1]>abs(gamestate[p2]))){
-                block<-p1
+            if(abs(gamestate[p1]>abs(gamestate[p2]))){ #ie if the value of p1 is bigger than val p2
+                block<-p1              #then set the block to be just p1
             } else {
                 block<-p2
             }
         } else {   #ie p1 is right of p2
-            if(abs(gamestate[p1]>abs(gamestate[p2]))){
+            if(abs(gamestate[p1]>abs(gamestate[p2]))){ #ie if the value of p1 is bigger than val p2
                 block<-p2
             } else {
                 block<-p1 
@@ -189,17 +189,17 @@ cdrmove <- function(gamestate,pointer){
         
     } else {
         if(p1<p2){
-            if(abs(gamestate[p1]<abs(gamestate[p2]))){
-                block<-c((p1+1):p2)
+            if(abs(gamestate[p1]<abs(gamestate[p2]))){ #ie if the value of p1 is smaller than val p2
+                block<-(p1+1):p2          #then set the block to be the indexes of p+1 through p2
             } else {
-                block<-c(p1:(p2-1))
+                block<-p1:(p2-1)
                 }  #ie, if p1 is left of p2 not adjacent
         } else {
         if(p1>p2){
             if(abs(gamestate[p1]<abs(gamestate[p2]))){
-                block<-c((p2+1):p1)
+                block<-(p2+1):p1
             } else {
-                block<-c(p2:(p1-1))
+                block<-p2:(p1-1)
                 }
         } #end else
             } #end else
