@@ -52,18 +52,25 @@ cdrtree <- function(root.value) {
     return( root )
 }
 
+
+
 cdrforrest <- function(pile){
     dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
     wd <- getwd()
     setwd(paste(pile[[1]],collapse=' '))
     for (i in pile){
         
-        filename<-paste(cdrindex(i),".txt",sep="")
+        filename<-paste(cdrindex(i)," :  ",paste(i,collapse=' '),".txt",sep="")
         
             write.table(cdrtree(i), filename)
     }
     setwd(wd)       
 }
       
-
+biome<- function(range){
+    for(i in range){
+        cdrforrest(gen.cdrpile(i))
+    }
+    
+}
     
