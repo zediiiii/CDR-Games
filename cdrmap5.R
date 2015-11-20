@@ -2,24 +2,31 @@
 ## you are in `assn`, which wont work becuse `i` isn't being incremented.
 ## You could invcrement `i` in the global, but, instead,
 ## I would encapsulate `i` in the function's parent.frame, avoiding possible conflicts
+
+library(data.tree)
+library(igraph)
+
 nodeNamer <- function() {
     i <- 0
     ## Note: `i` is incremented outside of the scope of this function using `<<-`
     function(node) sprintf("v%g", (i <<- i+1))
 }
 
-## Load your functions, havent looked at these too closely,
-## so just gonna assume they work
-#source(file="https://raw.githubusercontent.com/zediiiii/CDS/master/Generating%20Scripts.r")
-
 cdrtree <- function(root.value) {
-    root <- Node$new('root')  # assign root
+    
+    root <- Node$new('v0')  # make root node
+    #root  <- Node$new(paste(root.value,sep=" ")) #causes graphing to break
+    #root$name <- paste(root$value,collapse=" ") #doesn't assign name in function (it does outside function)
+    
+    #root$label <-root$value
     root$value <- root.value  # There seems to be a separation of value from name
+    root$name <- paste(unlist(root$value),collapse=' ')
     name_node <- nodeNamer()   # initialize the node counter to name the nodes
     
     ## Define your recursive helper function
     ## Note: you could do without this and have `cdrtree` have an additional
     ## parameter, say tree=NULL.  But, I think the separation is nice.
+    
     have.kids <- function(node) {
         ## this function (`cdrpointers`) needs work, it should return a 0 length list, not print
         ## something and then error if there are no values
@@ -27,9 +34,16 @@ cdrtree <- function(root.value) {
         pointers <- tryCatch({cdrpointers(node$value)}, error=function(e) return( list() ))
         if (!length(pointers)) return()
         for (pointer in pointers) {
+            
             child_val <- cdrmove(node$value, pointer)  # does this always work?
-            child <- Node$new(name_node())             # give the node a name
+            
+            child <- Node$new(name_node())
+            #child <- Node$new(as.character(paste(child_val,collapse=" ")))            # give the node a name
+            
             child$value <- child_val
+            child$name <- paste(unlist(child$value),collapse=' ')
+            #child$name <- paste(child_val,collapse=" ")  #name the node
+            #child$name <- child$value
             child <- node$AddChildNode(child)
             Recall(child)                              # recurse with child
         }
@@ -38,5 +52,3 @@ cdrtree <- function(root.value) {
     return( root )
 }
 
-library(data.tree)
-res <- cdrtree(root.value=c(1,-2,3))
