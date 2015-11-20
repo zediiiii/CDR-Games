@@ -52,6 +52,8 @@ cdrtree <- function(root.value) {
     return( root )
 }
 
+
+
 cdrforrest <- function(pile){
     dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
     wd <- getwd()
@@ -65,5 +67,10 @@ cdrforrest <- function(pile){
     setwd(wd)       
 }
       
-
+biome<- function(range){
+    for(i in range){
+        cdrforrest(gen.cdrpile(i))
+    }
+    
+}
     
