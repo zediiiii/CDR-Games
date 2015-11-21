@@ -4,7 +4,6 @@
 # parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r
-# TODO:         Rename identical terminal nodes that aren't the first or last value of the pile
 
 require(combinat)
 require(data.tree)
@@ -17,7 +16,7 @@ nodeNamer <- function() {
 
 nodeNamer2 <- function() {
   j <- 0
-  function(node) sprintf("v%g", (j <<- j+1))
+  function(node) sprintf("%g", (j <<- j+1))
 }
 
 cdrtree <- function(root.value, make.igraph=FALSE) {
@@ -43,35 +42,34 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
             child$value <- child.val
             #child$name <- paste(" ",unlist(child$value),collapse=' ') # Name it For text
             child$name <- paste(unlist(child$value),collapse=' ')  # Name it For Graphics
-            
-            child$name <- paste(name.node2(),child$name,sep=' ') #to make the names unique for as.igraph
-            #this is a hack until logic works for finding all duplicates
-            #duplicates are always terminal nodes, and most duplicates are ordered and accounted for
-            #possibly create a function to find list of all states for which cdrmove produces null
-            #which would find the list of possible terminal end duplicates
-            
             child <- node$AddChildNode(child)
             
-            #identical ending name handling catches most duplicates, but not all yet, so hacked above
-            #endname<-paste(unlist(tail(gen.cdrpile(length(root.value)), n=1)[[1]]),collapse=' ')
-            #startname<-paste(unlist(root$value),collapse=' ')
-            #
-            #if(child$name==endname){
-            #    child$name <- paste(name.node2(),"END2",child$name,sep='')  
-            #} else {
-            #        if(child$name==startname){
-            #            child$name <- paste(name.node2(),"END1",child$name,sep='')  
-            #        }
-            #    
-            #    append(child$name,templist)->templist
+            #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
+            endname<-paste(unlist(tail(gen.cdrpile(length(root.value)), n=1)[[1]]),collapse=' ')
+            startname<-paste(unlist(root$value),collapse=' ')
+            
+            if(child$name==endname){
+                child$name <- paste(name.node2(),"WIN-",child$name,sep='')  
+            } else {
+                    if(child$name==startname){
+                        child$name <- paste(name.node2(),"WIN+",child$name,sep='')  
+                    } else {
+                            if((sum(child$value < 0) == length(root.value)) || (sum(child$value < 0 ) == 0 )){
+                                child$name <- paste(name.node2(),"DRAW",child$name,sep='')
+                            }
+                    }
+                
+                append(child$name,templist)->templist
+            } 
+                #if all negative or all postitive then it is terminal and could be a duplicate, rename it
+                
+            Recall(child)    # recurse with child
             }
             
-            Recall(child)                              # recurse with child
+            
         }
-    #}
+    
     have.kids(root)
-    
-    
     return( root )
     
 }
