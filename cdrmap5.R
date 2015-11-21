@@ -12,6 +12,12 @@ nodeNamer <- function() {
     function(node) sprintf("v%g", (i <<- i+1))
 }
 
+nodeNamer2 <- function() {
+  j <- 0
+  ## Note: `j` is incremented outside of the scope of this function using `<<-`
+  function(node) sprintf("v%g", (j <<- j+1))
+}
+
 cdrtree <- function(root.value) {
     
     root <- Node$new('v0')  # make root node
@@ -22,6 +28,7 @@ cdrtree <- function(root.value) {
     root$value <- root.value  # There seems to be a separation of value from name
     root$name <- paste(unlist(root$value),collapse=' ')
     name_node <- nodeNamer()   # initialize the node counter to name the nodes
+    name_node2 <- nodeNamer2()
     
     ## Define your recursive helper function
     ## Note: you could do without this and have `cdrtree` have an additional
@@ -41,10 +48,26 @@ cdrtree <- function(root.value) {
             #child <- Node$new(as.character(paste(child_val,collapse=" ")))            # give the node a name
             
             child$value <- child_val
-            child$name <- paste(unlist(child$value),collapse=' ')
+            #child$name <- paste(" ",unlist(child$value),collapse=' ') # Name it For text
+            child$name <- paste(unlist(child$value),collapse=' ')  # Name it For Graphics
+            
+            #child$name <- paste(name_node2(),child$name,sep=' ') #to make the names unique for as.igraph
             #child$name <- paste(child_val,collapse=" ")  #name the node
             #child$name <- child$value
             child <- node$AddChildNode(child)
+            
+            
+            #identical ending name handling
+            endname<-paste(unlist(tail(gen.cdrpile(length(root.value)), n=1)[[1]]),collapse=' ')
+            startname<-paste(unlist(root$value),collapse=' ')
+            
+            if(child$name==endname){
+                child$name <- paste(name_node2(),"END2",child$name,sep='')  
+            } else {
+                    if(child$name==startname){
+                        child$name <- paste(namen_ode2(),"END1",child$name,sep='')  
+                    }
+            }
             Recall(child)                              # recurse with child
         }
     }
