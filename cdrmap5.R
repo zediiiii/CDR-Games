@@ -60,17 +60,18 @@ cdrforrest <- function(pile){
     setwd(paste(pile[[1]],collapse=' '))
     for (i in pile){
         
-        filename<-paste(cdrindex(i)," :  ",paste(i,collapse=' '),".txt",sep="")
+        filename<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".txt",sep="")
         
-            write.table(cdrtree(i), filename)
+            write.table(cdrtree(i), filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
     }
     setwd(wd)       
 }
       
 biome<- function(range){
+    wd<-getwd()
     for(i in range){
         cdrforrest(gen.cdrpile(i))
     }
-    
+    setwd(wd)
 }
     
