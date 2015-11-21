@@ -2,8 +2,8 @@
 # function:     cdrtree()
 # purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
 # parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
-# Author:       Joshua Watson Nov 2015
-# Dependancies: sort.listss.r ; gen.bincomb.r
+# Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
+# Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
 
 require(combinat)
 require(data.tree)
@@ -25,7 +25,7 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
     
     root <- Node$new('v0')  
     root$value <- root.value  
-    root$name <- paste(unlist(root$value),collapse=' ') #name this the same as the value collapsed in type char
+    root$name <- paste("ROOT",paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
     
     name.node <- nodeNamer()   # initialize the node counters to name the nodes
     name.node2 <- nodeNamer2()
@@ -62,13 +62,14 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
                                 #catch the other duplicate cases that aren't listed above
                                 if((child$name %in% templist == TRUE) || (child$name == root$name)){
                                     child$name <- paste(name.node2(),"DUP",child$name,sep='')
+                                    #templist[[length(pointerlist)+1]] <-
                                 } 
                             }
                     }
                 
             }
             #make a list of names for the last duplicate catcher
-            append(child$name,templist)->templist    
+            append(child$name,templist)->>templist
             Recall(child)    # recurse with child
             }
         }
@@ -76,10 +77,13 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
     return( root )
 }
 
-treegraph<-function(tree){
+#to plot
+#plot(as.igraph(a, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford,edge.arrow.size=0.2,vertex.size=10,vertex.color="light blue",vertex.label.color="black")
+#library(networkD3)
+#tempnetwork <- ToDataFrameNetwork(cdrtreeoutput, "name")
+#simpleNetwork(tempnetwork[-3], fontSize = 16)
 
-        plot(as.igraph(tree, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford)
-}
+
 
 
 #makes a forrest in text format
@@ -96,16 +100,23 @@ cdrtextforrest <- function(pile){
     setwd(wd)       
 }
       
+#Doesn't work yet somethin to do with line 119
+treegraph<-function(tree){
+    
+    plot(as.igraph(tree, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford,edge.arrow.size=0.2,vertex.size=10,vertex.color="light blue",vertex.label.color="black")
+}
+
+library(igraph)
 cdrimageforrest <- function(pile){
+    
     dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
     wd <- getwd()
     setwd(paste(pile[[1]],collapse=' '))
     for (i in pile){
-        cdrtree(i)->treevar
         
-        filenamevar<-paste(cdrindex(i),paste(i,collapse=' '),".png",sep="")
+        filenamevar<-paste(cdrindex(i),"  ",paste(i,collapse=' '),".png",sep="")
         png(filename=filenamevar)
-        plot(as.igraph(treevar, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford)
+        treegraph(cdrtree(i))
         dev.off()
     }
     setwd(wd)       
