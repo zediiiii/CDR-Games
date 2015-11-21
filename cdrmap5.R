@@ -2,7 +2,7 @@
 # function:     cdrtree()
 # purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
 # parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
-# Author:       Joshua Watson Nov 2015
+# Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
 # Dependancies: sort.listss.r ; gen.bincomb.r
 
 require(combinat)
@@ -62,13 +62,14 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
                                 #catch the other duplicate cases that aren't listed above
                                 if((child$name %in% templist == TRUE) || (child$name == root$name)){
                                     child$name <- paste(name.node2(),"DUP",child$name,sep='')
+                                    #templist[[length(pointerlist)+1]] <-
                                 } 
                             }
                     }
                 
             }
             #make a list of names for the last duplicate catcher
-            append(child$name,templist)->templist    
+            append(child$name,templist)->>templist
             Recall(child)    # recurse with child
             }
         }
