@@ -54,6 +54,7 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
                     if(child$name==startname){
                         child$name <- paste(name.node2(),"WIN+",child$name,sep='')  
                     } else {
+                        #if all negative or all postitive then it is terminal and could be a duplicate, rename it
                             if((sum(child$value < 0) == length(root.value)) || (sum(child$value < 0 ) == 0 )){
                                 child$name <- paste(name.node2(),"DRAW",child$name,sep='')
                             }
@@ -61,17 +62,13 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
                 
                 append(child$name,templist)->templist
             } 
-                #if all negative or all postitive then it is terminal and could be a duplicate, rename it
+                
                 
             Recall(child)    # recurse with child
             }
-            
-            
         }
-    
     have.kids(root)
     return( root )
-    
 }
 
 treegraph<-function(tree){

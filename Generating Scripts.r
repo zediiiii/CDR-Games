@@ -95,9 +95,9 @@ gen.bincomb <- function(n,bin=c(1,-1),rev=TRUE){
 # purpose:      Get the index number of a particular gamestate in a CDR game
 # parameters:   n:Number of binary elements per list entry
 # Author:       Joshua Watson Nov 2015
-# Dependancies: library(combinat)
 # TODO:         Make this draw on a database rather than doing the calculations on the fly.
 
+require(combinat)
 
 cdrindex <- function(gamestate){
     n<-length(gamestate)
@@ -112,8 +112,9 @@ cdrindex <- function(gamestate){
 # parameters:   m: the number of elements n in R^n for the first data file to be generated
 #               n: the number of elements m in R^m for the last data file to be generated 
 # Author:       Joshua Watson Nov 2015
-# Dependancies: library(combinat); sort.listss; gen.bincomb; gen.cdrpile
+# Dependancies: sort.listss; gen.bincomb; gen.cdrpile
 
+require(combinat)
 makecdrfiles <- function(m,n){
     
     for(i in n:m){
@@ -130,8 +131,8 @@ makecdrfiles <- function(m,n){
 # parameters:   m: the number of elements n in S^n for the first data file to be generated
 #               n: the number of elements m in S^m for the last data file to be generated 
 # Author:       Joshua Watson Nov 2015
-# Dependancies: library(combinat); sort.listss; gen.bincomb; gen.cdrpile
-
+# Dependancies: sort.listss; gen.bincomb; gen.cdrpile
+require(combinat)
 makecdsfiles <- function(m,n){
     
     for(i in n:m){
