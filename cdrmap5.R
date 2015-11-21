@@ -1,80 +1,85 @@
-## Name nodes uniquely, dont be assigning to the .Globalenv like
-## you are in `assn`, which wont work becuse `i` isn't being incremented.
-## You could invcrement `i` in the global, but, instead,
-## I would encapsulate `i` in the function's parent.frame, avoiding possible conflicts
+####################
+# function:     cdrtree()
+# purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
+# parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
+# Author:       Joshua Watson Nov 2015
+# Dependancies: sort.listss.r ; gen.bincomb.r
+# TODO:         Rename identical terminal nodes that aren't the first or last value of the pile
 
-library(data.tree)
-library(igraph)
+require(combinat)
+require(data.tree)
 
+#Two helper functions for keeping names distinct.
 nodeNamer <- function() {
     i <- 0
-    ## Note: `i` is incremented outside of the scope of this function using `<<-`
     function(node) sprintf("v%g", (i <<- i+1))
 }
 
 nodeNamer2 <- function() {
   j <- 0
-  ## Note: `j` is incremented outside of the scope of this function using `<<-`
   function(node) sprintf("v%g", (j <<- j+1))
 }
 
-cdrtree <- function(root.value) {
+cdrtree <- function(root.value, make.igraph=FALSE) {
     
-    root <- Node$new('v0')  # make root node
-    #root  <- Node$new(paste(root.value,sep=" ")) #causes graphing to break
-    #root$name <- paste(root$value,collapse=" ") #doesn't assign name in function (it does outside function)
+    templist<- list()
     
-    #root$label <-root$value
-    root$value <- root.value  # There seems to be a separation of value from name
-    root$name <- paste(unlist(root$value),collapse=' ')
-    name_node <- nodeNamer()   # initialize the node counter to name the nodes
-    name_node2 <- nodeNamer2()
+    root <- Node$new('v0')  
+    root$value <- root.value  
+    root$name <- paste(unlist(root$value),collapse=' ') #name this the same as the value collapsed in type char
     
-    ## Define your recursive helper function
-    ## Note: you could do without this and have `cdrtree` have an additional
-    ## parameter, say tree=NULL.  But, I think the separation is nice.
+    name.node <- nodeNamer()   # initialize the node counters to name the nodes
+    name.node2 <- nodeNamer2()
     
+    #recursive function that produces chidlren and names them appropriately
     have.kids <- function(node) {
-        ## this function (`cdrpointers`) needs work, it should return a 0 length list, not print
-        ## something and then error if there are no values
-        ## (or throw and error with the message if that is what you want)
         pointers <- tryCatch({cdrpointers(node$value)}, error=function(e) return( list() ))
         if (!length(pointers)) return()
         for (pointer in pointers) {
             
-            child_val <- cdrmove(node$value, pointer)  # does this always work?
+            child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
             
-            child <- Node$new(name_node())
-            #child <- Node$new(as.character(paste(child_val,collapse=" ")))            # give the node a name
-            
-            child$value <- child_val
+            child <- Node$new(name.node())
+            child$value <- child.val
             #child$name <- paste(" ",unlist(child$value),collapse=' ') # Name it For text
             child$name <- paste(unlist(child$value),collapse=' ')  # Name it For Graphics
             
-            #child$name <- paste(name_node2(),child$name,sep=' ') #to make the names unique for as.igraph
-            #child$name <- paste(child_val,collapse=" ")  #name the node
-            #child$name <- child$value
+            child$name <- paste(name.node2(),child$name,sep=' ') #to make the names unique for as.igraph
+            #this is a hack until logic works for finding all duplicates
+            #duplicates are always terminal nodes, and most duplicates are ordered and accounted for
+            #possibly create a function to find list of all states for which cdrmove produces null
+            #which would find the list of possible terminal end duplicates
+            
             child <- node$AddChildNode(child)
             
-            
-            #identical ending name handling
-            endname<-paste(unlist(tail(gen.cdrpile(length(root.value)), n=1)[[1]]),collapse=' ')
-            startname<-paste(unlist(root$value),collapse=' ')
-            
-            if(child$name==endname){
-                child$name <- paste(name_node2(),"END2",child$name,sep='')  
-            } else {
-                    if(child$name==startname){
-                        child$name <- paste(namen_ode2(),"END1",child$name,sep='')  
-                    }
+            #identical ending name handling catches most duplicates, but not all yet, so hacked above
+            #endname<-paste(unlist(tail(gen.cdrpile(length(root.value)), n=1)[[1]]),collapse=' ')
+            #startname<-paste(unlist(root$value),collapse=' ')
+            #
+            #if(child$name==endname){
+            #    child$name <- paste(name.node2(),"END2",child$name,sep='')  
+            #} else {
+            #        if(child$name==startname){
+            #            child$name <- paste(name.node2(),"END1",child$name,sep='')  
+            #        }
+            #    
+            #    append(child$name,templist)->templist
             }
+            
             Recall(child)                              # recurse with child
         }
-    }
+    #}
     have.kids(root)
+    
+    
     return( root )
+    
 }
 
+treegraph<-function(tree){
+
+        plot(as.igraph(tree, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford)
+}
 
 
 cdrforrest <- function(pile){
