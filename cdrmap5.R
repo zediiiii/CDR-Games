@@ -40,7 +40,8 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
             
             child <- Node$new(name.node())
             child$value <- child.val
-            #child$name <- paste(" ",unlist(child$value),collapse=' ') # Name it For text
+            
+            #child$name <- paste(" ",unlist(child$value),collapse=' ') # Name it for text
             child$name <- paste(unlist(child$value),collapse=' ')  # Name it For Graphics
             child <- node$AddChildNode(child)
             
@@ -49,21 +50,25 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
             startname<-paste(unlist(root$value),collapse=' ')
             
             if(child$name==endname){
-                child$name <- paste(name.node2(),"WIN-",child$name,sep='')  
+                child$name <- paste(name.node2(),"-WIN",child$name,sep='')  
             } else {
                     if(child$name==startname){
-                        child$name <- paste(name.node2(),"WIN+",child$name,sep='')  
+                        child$name <- paste(name.node2(),"+WIN",child$name,sep='')  
                     } else {
                         #if all negative or all postitive then it is terminal and could be a duplicate, rename it
                             if((sum(child$value < 0) == length(root.value)) || (sum(child$value < 0 ) == 0 )){
                                 child$name <- paste(name.node2(),"DRAW",child$name,sep='')
+                            } else {
+                                #catch the other duplicate cases that aren't listed above
+                                if((child$name %in% templist == TRUE) || (child$name == root$name)){
+                                    child$name <- paste(name.node2(),"DUP",child$name,sep='')
+                                } 
                             }
                     }
                 
-                append(child$name,templist)->templist
-            } 
-                
-                
+            }
+            #make a list of names for the last duplicate catcher
+            append(child$name,templist)->templist    
             Recall(child)    # recurse with child
             }
         }
@@ -77,7 +82,8 @@ treegraph<-function(tree){
 }
 
 
-cdrforrest <- function(pile){
+#makes a forrest in text format
+cdrtextforrest <- function(pile){
     dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
     wd <- getwd()
     setwd(paste(pile[[1]],collapse=' '))
@@ -90,6 +96,23 @@ cdrforrest <- function(pile){
     setwd(wd)       
 }
       
+cdrimageforrest <- function(pile){
+    dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
+    wd <- getwd()
+    setwd(paste(pile[[1]],collapse=' '))
+    for (i in pile){
+        cdrtree(i)->treevar
+        
+        filenamevar<-paste(cdrindex(i),paste(i,collapse=' '),".png",sep="")
+        png(filename=filenamevar)
+        plot(as.igraph(treevar, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford)
+        dev.off()
+    }
+    setwd(wd)       
+}
+
+
+
 biome<- function(range){
     wd<-getwd()
     for(i in range){
