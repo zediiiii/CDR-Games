@@ -3,7 +3,11 @@
 # purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
 # parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
 # Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
+<<<<<<< HEAD
 # Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+=======
+# Dependancies: sort.listss.r ; gen.bincomb.r
+>>>>>>> e03c2b94a81d5973a17ef8ac4d431307dd6b41b8
 
 require(combinat)
 require(data.tree)
@@ -74,19 +78,36 @@ cdrtree <- function(root.value, shorthand=FALSE) {
                     if((sum(child$value < 0) == length(root.value)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
                         child$name <- paste(prefix,"DRAW ",namevar,sep='')
                     } else {
+<<<<<<< HEAD
                         #catch the other duplicate cases that aren't listed above
                         if((child$name %in% templist == TRUE) || (child$name == root$name)){
                             child$name <- paste(prefix,"DUP ",namevar,sep='')
                         } 
+=======
+                        #if all negative or all postitive then it is terminal and could be a duplicate, rename it
+                            if((sum(child$value < 0) == length(root.value)) || (sum(child$value < 0 ) == 0 )){
+                                child$name <- paste(name.node2(),"DRAW",child$name,sep='')
+                            } else {
+                                #catch the other duplicate cases that aren't listed above
+                                if((child$name %in% templist == TRUE) || (child$name == root$name)){
+                                    child$name <- paste(name.node2(),"DUP",child$name,sep='')
+                                    #templist[[length(pointerlist)+1]] <-
+                                } 
+                            }
+>>>>>>> e03c2b94a81d5973a17ef8ac4d431307dd6b41b8
                     }
                 }
                 
             }
             #make a list of names for the last duplicate catcher
             append(child$name,templist)->>templist
+<<<<<<< HEAD
             
             if(shorthand==FALSE){
                 child$name <- paste(" ",child$name,collapse=' ') #add a space for cosmetics
+=======
+            Recall(child)    # recurse with child
+>>>>>>> e03c2b94a81d5973a17ef8ac4d431307dd6b41b8
             }
             
             Recall(child)    # recurse with child
