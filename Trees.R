@@ -134,22 +134,34 @@ dev.off()                   # must turn device off to complete .tex file
 
 
 ###################################
-get_model <- function(model_name) {
-    my_probs <- testPred[[model_name]]$Y1
-    return(roc(Ytst, my_probs))
-}
-model_list <- lapply(names(x), get_model)
-
-##############
-mylist <- list()
-
-for (key in my_keys){ 
-    mylist[[ key ]] <- value # value is computed dynamically
-}
-
-
 
 ##works to generate tree from node structure a
 
 temp <- ToDataFrameNetwork(a, "name")
-simpleNetwork(temp[-3], fontSize = 26)
+simpleNetwork(temp[-3], fontSize = 2)
+
+###there are many layouts available
+plot(as.igraph(a, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford)
+
+
+library(igraph)
+
+a = cdrtree(x[[877]],shorthand=FALSE)
+b<-as.igraph(a)
+if(ecount(b)>0){
+    V(b)$label.cex<-1
+}
+if(ecount(b)>6){
+    V(b)$label.cex<-.8
+}
+if(ecount(b)>12){
+    V(b)$label.cex<-.78
+}
+if(ecount(b)>28){
+    V(b)$label.cex<-.5
+}
+pdf("plot1.pdf", height=11, width=8.5)
+plot(b,layout=layout.reingold.tilford,rescale=TRUE,
+     vertex.shape='none',vertex.color='white')
+dev.off()
+
