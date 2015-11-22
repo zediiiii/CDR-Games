@@ -19,7 +19,7 @@ nodeNamer2 <- function() {
     function(node) sprintf("%g", (j <<- j+1))
 }
 
-cdrtree <- function(root.value, shorthand=FALSE,ouputastext=TRUE) {
+cdrtree <- function(root.value, shorthand=FALSE) {
     
     templist<- list()
     thispile<-gen.cdrpile(length(root.value))
@@ -65,18 +65,18 @@ cdrtree <- function(root.value, shorthand=FALSE,ouputastext=TRUE) {
             
             
             if(child$name==endname){
-                child$name <- paste(prefix,"-W ",namevar,sep='')  
+                child$name <- paste(prefix,"-WIN ",namevar,sep='')  
             } else {
                 if(child$name==startname){
-                    child$name <- paste(prefix,"+W ",namevar,sep='')  
+                    child$name <- paste(prefix,"+WIN ",namevar,sep='')  
                 } else {
                     #if all negative (!win) or all positive (!win) then it is terminal and could be a duplicate, rename it for igraph
                     if((sum(child$value < 0) == length(root.value)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
-                        child$name <- paste(prefix,"S ",namevar,sep='')
+                        child$name <- paste(prefix,"DRAW ",namevar,sep='')
                     } else {
                         #catch the other duplicate cases that aren't listed above
                         if((child$name %in% templist == TRUE) || (child$name == root$name)){
-                            child$name <- paste(prefix,"D ",namevar,sep='')
+                            child$name <- paste(prefix,"DUP ",namevar,sep='')
                         } 
                     }
                 }
@@ -96,6 +96,9 @@ cdrtree <- function(root.value, shorthand=FALSE,ouputastext=TRUE) {
         return( root )
 }
 
+
+# WOA!
+# count_isomorphisms(as.igraph(cdrtree(x[[877]])),as.igraph(cdrtree(x[[1877]])))
 #to plot
 #plot(as.igraph(a, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford,edge.arrow.size=0.2,vertex.size=10,vertex.color="light blue",vertex.label.color="black")
 #library(networkD3)
@@ -106,9 +109,14 @@ cdrtree <- function(root.value, shorthand=FALSE,ouputastext=TRUE) {
 
 
 #makes a forrest in text format
-cdrtextforrest <- function(pile){
-    dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
+cdrtextforrest <- function(pile,...){ #allows passing cdrtree arguments such as shorthand=TRUE
+    if(dir.exists("txt forrest")==FALSE){
+        dir.create("txt forrest")
+    } 
+        
     wd <- getwd()
+    setwd("txt forrest")
+    dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
     setwd(paste(pile[[1]],collapse=' '))
     for (i in pile){
         
@@ -119,29 +127,59 @@ cdrtextforrest <- function(pile){
     setwd(wd)       
 }
 
-#Doesn't work yet somethin to do with line 119
-treegraph<-function(tree){
-    
-    plot(as.igraph(tree, directed = TRUE, direction = "climb"),layout=layout.reingold.tilford,edge.arrow.size=0.2,vertex.size=10,vertex.color="light blue",vertex.label.color="black")
-}
 
-library(igraph)
-cdrimageforrest <- function(pile){
+cdrimageforrest <- function(pile){ #allows one to describe shorthand or longhand format as a direct argument
     
-    dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
+    require(igraph)
+    
+    if(dir.exists("IMG forrest")==FALSE){
+        dir.create("IMG forrest")
+    } 
+    
     wd <- getwd()
+    setwd("IMG forrest")
+    
+    dir.create(paste(pile[[1]],collapse=' '))
     setwd(paste(pile[[1]],collapse=' '))
     for (i in pile){
-        
-        filenamevar<-paste(cdrindex(i),"  ",paste(i,collapse=' '),".png",sep="")
-        png(filename=filenamevar)
-        treegraph(cdrtree(i))
-        dev.off()
+      
+        if(length(cdrpointers(i))>0){
+
+            filenamevar<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".pdf",sep="")
+            a <- cdrtree(i,shorthand=FALSE)
+            b<-as.igraph(a)
+            
+            if(ecount(b)>0){
+                V(b)$label.cex<-1
+            }
+            if(ecount(b)>3){
+                V(b)$label.cex<-.9
+            }
+            if(ecount(b)>6){
+                V(b)$label.cex<-.8
+            }
+            if(ecount(b)>12){
+                V(b)$label.cex<-.7
+            }
+            if(ecount(b)>17){
+                V(b)$label.cex<-.6
+            }
+            if(ecount(b)>28){
+                V(b)$label.cex<-.5
+            }
+            
+            pdf(filenamevar, height=11, width=8.5)
+            
+            plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white')
+            
+            dev.off()
+
+        } 
     }
     setwd(wd)       
 }
 
-
+# a<-"c:/users/joshua/documents/cds"
 
 textbiome<- function(range){
     wd<-getwd()
@@ -157,5 +195,25 @@ imagebiome<- function(range){
         cdrimageforrest(gen.cdrpile(i))
     }
     setwd(wd)
+}
+
+biosphere <- function(range){
+   
+     textbiome<- function(range){
+        wd<-getwd()
+        for(i in range){
+            cdrtextforrest(gen.cdrpile(i))
+        }
+        setwd(wd)
+    }
+    
+    imagebiome<- function(range){
+        wd<-getwd()
+        for(i in range){
+            cdrimageforrest(gen.cdrpile(i))
+        }
+        setwd(wd)
+    }
+    
 }
 
