@@ -1,5 +1,5 @@
 ####################
-# function:     cdrtree(short=False)
+# function:     cdrtree()
 # purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
 # parameters:	root.value: the value of the seed to generate the tree. Values of length>6 are not recommended.
 # Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
@@ -37,7 +37,7 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
         for (pointer in pointers) {
             
             child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
-            index<-cdrindex(child.val)
+            
             child <- Node$new(name.node())
             child$value <- child.val
 
@@ -69,12 +69,8 @@ cdrtree <- function(root.value, make.igraph=FALSE) {
             }
             #make a list of names for the last duplicate catcher
             append(child$name,templist)->>templist
-            if(short=FALSE){
-                child$name <- paste(" ",child$name,collapse="") #add a space for text cosmetics
-            } else{
-                child$name <- paste()
-                
-            }
+            child$name <- paste(" ",child$name,collapse=' ') #add a space for cosm
+            
             Recall(child)    # recurse with child
             }
         }
