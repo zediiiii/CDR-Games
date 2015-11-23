@@ -149,13 +149,14 @@ cdrtree <- function(root.value, shorthand=FALSE) {
 #               dir.out: The name of the directory where the forrest will be stored.
 #               forrest.type: The type of forrest to be generated. Must be either 'text' or 'image'.
 # Author:       Joshua Watson Nov 2015
-# Dependancies: sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
-#               All dependancies can be sourced from 'Generating Scripts.r" 
+# Dependancies: igraph; sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+#               All dependancies can be sourced from 'Generating Scripts.r" except igraph (CRAN)
 # Example:      cdrforrest(gen.cdrpile(4),forrest.type='text',dir.out='R_4 Text Trees')
+# NOTES:        The forrest.type arg isn't working for some reason. ARG.
 
 cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest',...){
-    
-    forrest.type <- match.arg(c('text','image'),c('text','image'))
+    require(igraph)
+    #forrest.type <- match.arg(c('text','image'),c('text','image'))
 
     if(dir.exists(dir.out)==FALSE){
         dir.create(dir.out)
@@ -175,7 +176,6 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest',...){
         }
     
     if(forrest.type=='image'){
-        require(igraph)
         
         dir.create(paste(pile[[1]],collapse=' '))
         setwd(paste(pile[[1]],collapse=' '))
@@ -236,11 +236,12 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest',...){
 #               dir.out: The name of the directory where the forrest will be stored.
 #               forrest.type: The type of forrest to be generated. Must be either 'text' or 'image'..
 # Author:       Joshua Watson Nov 2015
-# Dependancies: sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
-#               All dependancies can be sourced from 'Generating Scripts.r" 
+# Dependancies: igraph; sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+#               All dependancies can be sourced from 'Generating Scripts.r" except igraph (CRAN)
 # Example:      cdrbiome(3:4,forrest.type='text',dir.out='cdrtextforrest')
 
 cdrbiome<- function(range,...){
+    require(igraph)
     wd<-getwd() #to realign directories if there are errors in nested functions.
     for(i in range){
         cdrforrest(gen.cdrpile(i))
@@ -255,12 +256,13 @@ cdrbiome<- function(range,...){
 # parameters:	range:a vector of the numbers to be included in tree generation.
 #               dir.out: The name of the directory where the forrest will be stored (through cdrforrest).
 # Author:       Joshua Watson Nov 2015
-# Dependancies: sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
-#               All dependancies can be sourced from 'Generating Scripts.r" 
+# Dependancies: igraph; sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+#               All dependancies can be sourced from 'Generating Scripts.r" except igraph (CRAN)
 # Example:      cdrbiome(3:4,,forrest.type='text',dir.out='cdrtextforrest')
+# Notes:        Currently only generates text output for some reason.
 
 cdrbiosphere <- function(range,...){
-    
+    require(igraph)
     cdrbiome(range,forrest.type="text")
     cdrbiome(range,forrest.type="image")
 

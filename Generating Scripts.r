@@ -208,7 +208,6 @@ cdrmove <- function(gamestate,pointer){
 # parameters:	game: a cdr gamestate in vector form, ie, c(1,2,3,4,5)
 #               Example: cdrpointers(c(-2,1,3,-4,5))
 # Author:       Joshua Watson & Alyssa Seidman 2015
-# Dependancies: none
 
 cdrpointers <- function(gamestate){
     poscount<-0
