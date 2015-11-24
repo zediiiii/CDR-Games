@@ -203,11 +203,12 @@ cdrmove <- function(gamestate,pointer){
 
 ####################
 # function:     cdrpointers()
-# purpose:        Finds the pointers of a particular CDR gamestate and outputs a list of pointer vectors
+# purpose:      Finds the pointers of a particular CDR gamestate and outputs a list of pointer vectors
 #               Note that the code works so that the second number is always the negative number.
 # parameters:	game: a cdr gamestate in vector form, ie, c(1,2,3,4,5)
-#               Example: cdrpointers(c(-2,1,3,-4,5))
+# Example:      cdrpointers(c(-2,1,3,-4,5))
 # Author:       Joshua Watson & Alyssa Seidman 2015
+
 
 cdrpointers <- function(gamestate){
     poscount<-0
@@ -234,4 +235,31 @@ cdrpointers <- function(gamestate){
         }
     }
     pointerlist
+}
+
+
+####################
+# function:     what.pointer()
+# purpose:      Given two gamestates, finds the pointer from the first to the second.
+# parameters:	state1: a cdr gamestate in vector form, ie, c(1,2,3,4,5)
+#               state2: a cdr gamestate in vector form, ie, c(1,2,3,4,5)
+# example:      what.pointer(c(2,3,-5,-4,-1),c(2,3,4,5,-1))
+# Author:       Joshua Watson 2015
+
+
+what.pointer<-function(state1,state2){
+    
+    movelist<-list()
+    orderedpointerlist<-list()
+    
+    list.of.pointers<-cdrpointers(state1)
+    for(i in 1:length(list.of.pointers)){
+        append(paste(cdrmove(state1,list.of.pointers[[i]]),collapse=" "),movelist)->movelist
+        append(paste(list.of.pointers[[i]],collapse=","),orderedpointerlist)->orderedpointerlist
+    }
+    
+    state2<-paste(state2,collapse=" ")
+    pointerindex<-match(state2,movelist)
+    orderedpointerlist[[pointerindex]]
+
 }
