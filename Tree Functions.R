@@ -143,9 +143,15 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
 #               use another commit (~55) if you want to generate a text forrest for now.
 
 cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
+<<<<<<< HEAD
     
     require(igraph)
     require(combinat)
+=======
+    
+    require(igraph)
+    
+>>>>>>> 3bcc872f54b47af195768dec96b04d57b2321a70
     # inoperative argument matching that I don't fully understand yet
     # forrest.type <- match.arg(1:100,c('text','image'),*)
     
