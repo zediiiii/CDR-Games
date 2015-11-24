@@ -1,5 +1,5 @@
 ####################
-#Helper functions for cdrtree
+# Helper functions for cdrtree
 
 
 #Two helper functions for keeping names distinct.
@@ -12,40 +12,8 @@ nodeNamer2 <- function() {
     function(node) sprintf("%g", (j <<- j+1))
 }
 
-#Edge labeling helpers
-
-#  Toy example
-#edges<-list(e1="1 ROOT -3 2 4 -1 --2  -3 -2 4 -1")
-#pointers<-c("2,-1","3,-2","4,-3","2,-1","2,-1","4,-3","2,-3")
-#labels<-list("2,-3")
-
-#finds the pointer for an edge in the format given by 
-
-getlabel<-function(myedge, mypointers=pointerlist, n){
-    parsed<-split_edge(myedge, n)
-    for (i in 1:length(mypointers)){
-        
-        #pointer<-as.numeric(strsplit(mypointers[i],",")[[1]])
-        pointer<-as.integer(unlist(strsplit(mypointers[[i]],",")))
-        if(is_pointer(parsed$left, pointer)){
-            keep<<-paste(pointer,collapse=",")
-            break
-        }
-    }
-    return(keep)
-}
-
-
-# get ith edge
-# get.edgelist(root)[i,]
-
-is_pointer<-function(left, pointerpair){
-    # FIX THIS
-    # find result of running left and right through cdrpointer
-    mylist<-cdrpointers(left)
-    
-    any(sapply(mylist,function(x){all(pointerpair==x)}))
-}
+# Edge labeling helper function takes a two element character string and splits it 
+# to vector as integer format
 
 split_edge<-function(edge, n){
     
@@ -63,9 +31,6 @@ split_edge<-function(edge, n){
     return(list(left=left, right=right))
 }
 
-split_matrix_edge <- function(edge,n){
-}
-
 ####################
 # function:     cdrtree()
 # purpose:      Generates a CDR tree with uniquely named nodes (uniqueness is required for igraph export)
@@ -78,7 +43,7 @@ split_matrix_edge <- function(edge,n){
 require(combinat)
 require(data.tree)
 
-cdrtree <- function(root.value,make.igraph=TRUE) {
+cdrtree <- function(root.value,make.igraph=TRUE,...) {
     
     name.node <- nodeNamer()   # initialize the node counters to name the nodes
     name.node2 <- nodeNamer2()
@@ -142,7 +107,7 @@ cdrtree <- function(root.value,make.igraph=TRUE) {
     have.kids(root)
     
     if(make.igraph==TRUE){
-        #Edge labeling is only needed for making igraphs 
+        #Edge labeling handling only needed for making igraphs 
         root<-as.igraph(root)
         for(i in seq(length(E(root)))){
             
@@ -157,19 +122,6 @@ cdrtree <- function(root.value,make.igraph=TRUE) {
     } else{
         return( root )
     }
-    #NEED clean this up
-    #Explicit edge single label rename for the 1st edge - only for igraph data type
-    #E(root)[1]$label<-'testedge'
-    
-    ###attempt at labeling the edges NEED clean this up
-    
-#    root<-as.igraph(root)
-    
-#     V(root)$label.cex<-.7
-#     E(root)$label<-pointerlist #name all the edge labels from list, ordering?
-    
-#     E(root)$label.cex<-.7
-#     pointerlist
 }
 
 # This could be useful.
@@ -185,20 +137,24 @@ cdrtree <- function(root.value,make.igraph=TRUE) {
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
 # Example:      cdrforrest(gen.cdrpile(4),forrest.type='text',dir.out='R_4 Text Trees')
+# NOTES:        presently, the text forrest is broken due to igraph export in cdrtree. 
+#               use another commit (~55) if you want to generate a text forrest for now.
 
-cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest'){
+cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
     
-    forrest.type <- match.arg(c('text','image'))
+    require(igraph)
     
-    if(dir.exists(dir.out)==FALSE){
-        dir.create(dir.out)
-    } 
+    # inoperative argument matching that I don't fully understand yet
+    # forrest.type <- match.arg(1:100,c('text','image'),*)
     
-    setwd(dir.out)
     wd <- getwd()
     
     #cdr text forrest
     if(forrest.type=='text'){
+        if(dir.exists(dir.out)==FALSE){
+            dir.create(dir.out)
+        } 
+        setwd(dir.out)
         
         dir.create(paste(pile[[1]],collapse=' '),showWarnings = FALSE)
         setwd(paste(pile[[1]],collapse=' '))
@@ -207,8 +163,12 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest'){
             write.table(cdrtree(i), filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
         }
     }
+    
     if(forrest.type=='image'){
-        require(igraph)
+        if(dir.exists(dir.out)==FALSE){
+            dir.create(dir.out)
+        } 
+        setwd(dir.out)
         
         dir.create(paste(pile[[1]],collapse=' '))
         setwd(paste(pile[[1]],collapse=' '))
@@ -217,8 +177,7 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest'){
             if(length(cdrpointers(i))>0){
                 
                 filenamevar<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".pdf",sep="")
-                a <- cdrtree(i)
-                b<-as.igraph(a)
+                b <- cdrtree(i)
                 
                 #educated adjustment of label.cex to minimize overlaps in output.
                 if(ecount(b)>0){
@@ -261,11 +220,6 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest'){
     setwd(wd)
 }
 
-
-
-###
-
-
 ####################
 # function:     cdrbiome()
 # purpose:      Generates a set of CDR trees from a generated pile. Takes arguments from cdrforrest (listed).
@@ -275,7 +229,8 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest'){
 # Author:       Joshua Watson Nov 2015
 # Dependancies: igraph; sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
 #               All dependancies can be sourced from 'Generating Scripts.r" except igraph (CRAN)
-# Example:      cdrbiome(3:4,forrest.type='text',dir.out='cdrtextforrest')
+# example:      cdrbiome(3:4,forrest.type='text',dir.out='cdrtextforrest')
+# example2:     cdrbiome(3:6,forrest.type='image',dir.out='cdrtextforrest')
 
 cdrbiome<- function(range,...){
     require(igraph)
@@ -285,7 +240,6 @@ cdrbiome<- function(range,...){
     }
     setwd(wd)
 }
-
 
 ####################
 # function:     cdrbiosphere()
@@ -302,6 +256,4 @@ cdrbiosphere <- function(range,...){
     require(igraph)
     cdrbiome(range,forrest.type="text")
     cdrbiome(range,forrest.type="image")
-
 }
-
