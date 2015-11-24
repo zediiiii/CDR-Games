@@ -173,56 +173,57 @@ cdrforrest <- function(pile,forrest.type='text', dir.out='cdrforrest',...){
         for (i in pile){
             filename<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".txt",sep="")
             write.table(cdrtree(i), filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
-        }
-    
-    if(forrest.type=='image'){
-        
-        dir.create(paste(pile[[1]],collapse=' '))
-        setwd(paste(pile[[1]],collapse=' '))
-        for (i in pile){
+        } else{
             
-            if(length(cdrpointers(i))>0){
+            if(forrest.type=='image'){
                 
-                filenamevar<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".pdf",sep="")
-                a <- cdrtree(i,shorthand=FALSE)
-                b<-as.igraph(a)
-                
-                #educated adjustment of label.cex to minimize overlaps in output.
-                if(ecount(b)>0){
-                    V(b)$label.cex<-1
+                dir.create(paste(pile[[1]],collapse=' '))
+                setwd(paste(pile[[1]],collapse=' '))
+                for (i in pile){
+                    
+                    if(length(cdrpointers(i))>0){
+                        
+                        filenamevar<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".pdf",sep="")
+                        a <- cdrtree(i,shorthand=FALSE)
+                        b<-as.igraph(a)
+                        
+                        #educated adjustment of label.cex to minimize overlaps in output.
+                        if(ecount(b)>0){
+                            V(b)$label.cex<-1
+                        }
+                        if(ecount(b)>3){
+                            V(b)$label.cex<-.9
+                        }
+                        if(ecount(b)>6){
+                            V(b)$label.cex<-.8
+                        }
+                        if(ecount(b)>12){
+                            V(b)$label.cex<-.7
+                        }
+                        if(ecount(b)>17){
+                            V(b)$label.cex<-.6
+                        }
+                        if(ecount(b)>28){
+                            V(b)$label.cex<-.5
+                        }
+                        if(ecount(b)>40){
+                            V(b)$label.cex<-.4
+                        }
+                        if(ecount(b)>50){
+                            V(b)$label.cex<-.3
+                        }
+                        if(ecount(b)>70){
+                            V(b)$label.cex<-.2
+                        }
+                        if(ecount(b)>90){
+                            V(b)$label.cex<-.1
+                        }
+                        
+                        pdf(filenamevar, height=11, width=8.5)
+                        plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white')
+                        dev.off()
+                    } 
                 }
-                if(ecount(b)>3){
-                    V(b)$label.cex<-.9
-                }
-                if(ecount(b)>6){
-                    V(b)$label.cex<-.8
-                }
-                if(ecount(b)>12){
-                    V(b)$label.cex<-.7
-                }
-                if(ecount(b)>17){
-                    V(b)$label.cex<-.6
-                }
-                if(ecount(b)>28){
-                    V(b)$label.cex<-.5
-                }
-                if(ecount(b)>40){
-                    V(b)$label.cex<-.4
-                }
-                if(ecount(b)>50){
-                    V(b)$label.cex<-.3
-                }
-                if(ecount(b)>70){
-                    V(b)$label.cex<-.2
-                }
-                if(ecount(b)>90){
-                    V(b)$label.cex<-.1
-                }
-                
-                pdf(filenamevar, height=11, width=8.5)
-                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white')
-                dev.off()
-            } 
         }
     }
         setwd(wd)       
