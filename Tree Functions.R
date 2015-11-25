@@ -131,6 +131,39 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
 
 
 ####################
+# function:     cdrfreezecount()
+# purpose:      Counts the number of gamestates that have no moves in a given R^n
+# parameters:	n: which n in R^n to consider 
+# Author:       Joshua Watson Nov 2015
+# Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+# Example:      
+
+cdrfreezecount <- function(n){
+    count<-0
+    pile<-gen.cdrpile(n)
+    for(i in pile){
+        thepointers<-cdrpointers(i)
+        if(length(thepointers)<1){
+        count<-count+1    
+        }
+    }
+    count
+}
+
+####################
+# cdrfreezecountloop()
+# purpose : get freeze counts for multiple n, defined from a:b
+
+cdrfreezecountloop<- function(a,b){
+    freezelist<-list()
+    for(i in a:b){
+    freezelist[[length(freezelist)+1]]<-cdrfreezecount(i)
+    }
+    names(freezelist)<-paste("R^",a:b,sep='')
+    freezelist
+}
+
+####################
 # function:     cdrforrest()
 # purpose:      Generates a set of CDR trees from a generated pile and exports as text to dir.out
 # parameters:	pile: The list of gamestates. Generate a list using gen.cdrpile()
@@ -143,15 +176,10 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
 #               use another commit (~55) if you want to generate a text forrest for now.
 
 cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
-<<<<<<< HEAD
     
     require(igraph)
     require(combinat)
-=======
     
-    require(igraph)
-    
->>>>>>> 3bcc872f54b47af195768dec96b04d57b2321a70
     # inoperative argument matching that I don't fully understand yet
     # forrest.type <- match.arg(1:100,c('text','image'),*)
     
@@ -183,8 +211,8 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
         for (i in pile){
             
             if(length(cdrpointers(i))>0){
-                
-                filenamevar<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".pdf",sep="")
+                thisindex<-cdrindex(i)
+                filenamevar<-paste(thisindex,"    ",paste(i,collapse=' '),".pdf",sep="")
                 b <- cdrtree(i)
                 
                 #educated adjustment of label.cex to minimize overlaps in output.
@@ -203,7 +231,7 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
                 }
                 if(ecount(b)>17){
                     V(b)$label.cex<-.6
-                    E(b)$label.vex<-.7
+                    E(b)$label.cex<-.7
                 }
                 if(ecount(b)>23){
                     V(b)$label.cex<-.5
@@ -219,19 +247,19 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
                 }
                 if(ecount(b)>62){
                     V(b)$label.cex<-.2
-                    E(b)$label.vex<-.2
+                    E(b)$label.cex<-.2
                 }
                 if(ecount(b)>78){
                     V(b)$label.cex<-.1
-                    E(b)$label.vex<-.1
+                    E(b)$label.cex<-.1
                 }
                 if(ecount(b)>96){
                     V(b)$label.cex<-.05
-                    E(b)$label.vex<-.07
+                    E(b)$label.cex<-.07
                 }
                 
                 pdf(filenamevar, height=11, width=8.5)
-                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white')
+                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," nodes."))
                 dev.off()
             } 
         }
