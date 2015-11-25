@@ -154,7 +154,8 @@ makecdsfiles <- function(m,n){
 cdrmove <- function(gamestate,pointer){
     
     ##### This block of code finds the index of the block to have CDR performed on it ####
-    if(length(pointer)<=0){
+  
+      if(length(pointer)<=0){
         return(list())
         break
     }

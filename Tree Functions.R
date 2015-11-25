@@ -259,7 +259,7 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
                 }
                 
                 pdf(filenamevar, height=11, width=8.5)
-                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," nodes."))
+                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," children"))
                 dev.off()
             } 
         }
