@@ -133,6 +133,102 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
 # This could be useful.
 # count_isomorphisms(as.igraph(cdrtree(x[[877]])),as.igraph(cdrtree(x[[1877]])))
 
+####################
+# function:     cdrtreewincount()
+# purpose:      enumerate the list of winnable games in a given strategic pile
+# parameters:	pile: a list of the gamestates to analyze for wins
+# Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
+# Dependancies: sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile; permn
+#               All dependancies can be sourced from 'Generating Scripts.r" 
+# Example:      cdrtree(gen.cdrpile(5)[[877]],make.igraph=FALSE)
+
+require(combinat)
+require(data.tree)
+require(combinat)
+require(igraph)
+
+cdrtreewincount <- function(pile,list.out=FALSE) {
+    wincount<-0
+    thispile<-pile
+    list.winable<-list()
+    
+    for(gamestate in pile){
+        templist<-list()
+        
+        name.node <- nodeNamer()   # initialize the node counters to name the nodes
+        name.node2 <- nodeNamer2()
+        
+        
+        root <- Node$new('v0')  
+        root$value <- gamestate  
+        
+        root$name <- paste("ROOT",paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
+        
+        #recursive function that produces children and names them appropriately
+        have.kids <- function(node) {
+            pointers <- tryCatch({cdrpointers(node$value)}, error=function(e) return( list() ))
+            if (!length(pointers)) return()
+            for (pointer in pointers) {
+                #append pointer to precisely ordered pointer list
+                child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
+                
+                #This isn't currently necessary and adds tons of time for large piles
+                #child.index<-cdrindex(child.val)
+                
+                child <- Node$new(name.node()) #give the new node a unique name
+                child$value <- child.val
+                child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
+                namevar<-child$name
+                prefix<-name.node2() #designate a unique prefix in case of a duplicate (required for igraph)
+                
+                
+                child <- node$AddChildNode(child)
+                
+                #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
+                endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
+                startname<-paste(unlist(thispile[[1]]),collapse=' ') # this is the name of the first element in the pile
+                
+                if(child$name==endname){
+                    child$name <- paste(prefix,"-WIN ",child$name,sep='')
+                    append(child$name,list.winable)->>list.winable
+                    wincount<<-wincount+1
+                } else {
+                    if(child$name==startname){
+                        child$name <- paste(prefix,"+WIN ",child$name,sep='')
+                        append(child$name,list.winable)->>list.winable
+                        wincount<<-wincount+1
+                        #if all negative (!win) or all positive (!win) then it is terminal and could be a duplicate, rename it for igraph
+                        if((sum(child$value < 0) == length(gamestate)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
+                            child$name <- paste(prefix,"DRAW ",namevar,sep='')
+                            
+                        } else {
+                            
+                            #catch the other duplicate cases that aren't listed above
+                            if((child$name %in% templist == TRUE) || (child$name == root$name)){
+                                child$name <- paste(prefix,"DUP ",namevar,sep='')
+                            } 
+                        }
+                    }
+                    
+                }
+                #make a list of names for comparison in the last duplicate catcher
+                append(child$name,templist)->>templist
+                child$name <- paste(" ",child$name,collapse=' ') #add a space for style
+                Recall(child)    # recurse with child
+            }
+        }
+        have.kids(root)
+    }
+    if(list.out==TRUE){
+        list(paste("There are ", wincount, " games in R^",length(pile[[1]])),list.winable)    
+    } else{
+        paste("There are ", wincount, " winable games in R^",length(pile[[1]]),sep="") 
+    }
+       
+    }
+
+
+
 
 ####################
 # function:     cdrfreezecount()
@@ -166,6 +262,9 @@ cdrfreezecountloop<- function(a,b){
     names(freezelist)<-paste("R^",a:b,sep='')
     freezelist
 }
+
+
+
 
 ####################
 # function:     cdrforrest()
