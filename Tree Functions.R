@@ -2,7 +2,8 @@
 # Helper functions for cdrtree
 
 
-#Two helper functions for keeping names distinct.
+#Two helper functions iterate through "vn" where n is a sequential number. Used for keeping names distinct.
+#which is required for plotting igraph objects.
 nodeNamer <- function() {
     i <- 0
     function(node) sprintf("v%g", (i <<- i+1))
@@ -67,25 +68,28 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
             append(paste(pointer[1],pointer[2],sep=','),pointerlist)->>pointerlist
 
             child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
-            child.index<-cdrindex(child.val)
-            child <- Node$new(name.node())
+            
+            #This isn't currently necessary and adds tons of time for large piles
+            #child.index<-cdrindex(child.val)
+            
+            child <- Node$new(name.node()) #give the new node a unique name
             child$value <- child.val
-            child$name <- paste(unlist(child$value),collapse=' ')  # Name it 
+            child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
             namevar<-child$name
-            prefix<-name.node2()
+            prefix<-name.node2() #designate a unique prefix in case of a duplicate (required for igraph)
         
             
             child <- node$AddChildNode(child)
             
             #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
-            endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ')
-            startname<-paste(unlist(thispile[[1]]),collapse=' ')
+            endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
+            startname<-paste(unlist(thispile[[1]]),collapse=' ') # this is the name of the first element in the pile
             
             if(child$name==endname){
-                child$name <- paste(prefix,"-WIN ",child$name,sep='')  #full name not needed here
+                child$name <- paste(prefix,"-WIN ",child$name,sep='')  #full name is only needed for naming edges with pointers
             } else {
                 if(child$name==startname){
-                    child$name <- paste(prefix,"+WIN ",child$name,sep='')  #full name not needed here
+                    child$name <- paste(prefix,"+WIN ",child$name,sep='')  #full name is only needed for naming edges with pointers
                 } else {
                     #if all negative (!win) or all positive (!win) then it is terminal and could be a duplicate, rename it for igraph
                     if((sum(child$value < 0) == length(root.value)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
@@ -100,9 +104,9 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
                 }
                 
             }
-            #make a list of names for the last duplicate catcher
+            #make a list of names for comparison in the last duplicate catcher
             append(child$name,templist)->>templist
-            child$name <- paste(" ",child$name,collapse=' ') #add a space for cosmetics
+            child$name <- paste(" ",child$name,collapse=' ') #add a space for style
             Recall(child)    # recurse with child
         }
     }
@@ -211,7 +215,7 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
         for (i in pile){
             
             if(length(cdrpointers(i))>0){
-                thisindex<-cdrindex(i)
+                thisindex<-which(sapply(pile, identical, i ))
                 filenamevar<-paste(thisindex,"    ",paste(i,collapse=' '),".pdf",sep="")
                 b <- cdrtree(i)
                 
@@ -257,11 +261,19 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
                     V(b)$label.cex<-.05
                     E(b)$label.cex<-.07
                 }
+                if(ecount(b)>140){
+                    V(b)$label.cex<-.025
+                    E(b)$label.cex<-.035
+                }
+                if(ecount(b)>168){
+                    V(b)$label.cex<-.016
+                    E(b)$label.cex<-.022
+                }
                 
                 pdf(filenamevar, height=11, width=8.5)
                 plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," children"))
                 dev.off()
-            } 
+            }
         }
     }
     setwd(wd)
