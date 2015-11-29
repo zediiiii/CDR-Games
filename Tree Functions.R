@@ -151,7 +151,7 @@ cdrwincount <- function(n,list.out=FALSE,...) {
     wincount.plus<-0
     wincount.minus<-0
     thispile<-gen.cdrpile(n)
-    list.winable<-list()
+    list.winnable<-list()
     endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
     startname<-paste(unlist(thispile[[1]]),collapse=' ') # this is the name of the first element in the pile
     
@@ -180,7 +180,7 @@ cdrwincount <- function(n,list.out=FALSE,...) {
                 if(child$name==endname){
                     child$name <- paste(prefix,"-WIN ",child$name,sep='')
                         if(list.out=TRUE){
-                            append(gamestate,list.winable)->>list.winable
+                            append(gamestate,list.winnable)->>list.winnable
                         }
                     wincount.minus<<-wincount.minus+1
                     return() #win found, go to next gamestate
@@ -189,7 +189,7 @@ cdrwincount <- function(n,list.out=FALSE,...) {
                     if(child$name==startname){
                         child$name <- paste(prefix,"+WIN ",child$name,sep='')
                             if(list.out=TRUE){
-                                append(gamestate,list.winable)->>list.winable
+                                append(gamestate,list.winnable)->>list.winnable
                             }
                         wincount.plus<<-wincount.plus+1
                         return() #win found, go to next gamestate
@@ -201,9 +201,9 @@ cdrwincount <- function(n,list.out=FALSE,...) {
         have.kids(root)
     }
     if(list.out==TRUE){
-        list(paste("There are ", wincount.plus, " + winable games in R^",length(thispile[[1]])),sep="",paste("There are ", wincount.minus, " - winable games in R^",length(thispile[[1]]),sep=""),list.winable)    
+        list(paste("There are ", wincount.plus, " + winnable games in R^",length(thispile[[1]])),sep="",paste("There are ", wincount.minus, " - winnable games in R^",length(thispile[[1]]),sep=""),list.winnable)    
     } else{
-        list(paste("There are ", wincount.plus, " + winable games in R^",length(thispile[[1]]),sep=""),paste("There are ", wincount.minus, " - winable games in R^",length(thispile[[1]]),sep=""))
+        list(paste("There are ", wincount.plus, " + winnable games in R^",length(thispile[[1]]),sep=""),paste("There are ", wincount.minus, " - winnable games in R^",length(thispile[[1]]),sep=""))
     }
 }
 
