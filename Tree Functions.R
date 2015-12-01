@@ -134,96 +134,6 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
 # count_isomorphisms(as.igraph(cdrtree(x[[877]])),as.igraph(cdrtree(x[[1877]])))
 
 ####################
-# function:     cdrwincount()
-# purpose:      enumerate the list of winnable games in a given strategic pile
-# parameters:	n: the number of elements in the pile to be analyzed
-# Author:       Joshua Watson Nov 2015, help from TheTime @stackoverflow
-# Dependancies: sort.listss.r; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile; permn
-#               All dependancies can be sourced from 'Generating Scripts.r" 
-# Example:      cdrtree(gen.cdrpile(5)[[877]],make.igraph=FALSE)
-
-require(combinat)
-require(data.tree)
-require(combinat)
-require(igraph)
-
-cdrwincount <- function(n,list.out=FALSE,...) {
-    wincount.plus<-0
-    wincount.minus<-0
-    thispile<-gen.cdrpile(n)
-    list.winnable<-list()
-    endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
-    startname<-paste(unlist(thispile[[1]]),collapse=' ') # this is the name of the first element in the pile
-    
-    #loop over every gamestate in the pile looking for wins
-    for(gamestate in thispile){
-        templist<-list()
-        
-        root <- Node$new('v0')  
-        root$value <- gamestate  
-        
-        root$name <- paste("ROOT",paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
-        
-        #recursive function that produces children and names them appropriately
-        have.kids <- function(node) {
-            pointers <- tryCatch({cdrpointers(node$value)}, error=function(e) return( list() ))
-            if (!length(pointers)) return()
-            for (pointer in pointers) {
-                
-                child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
-                child <- Node$new('thisname')
-                child$value <- child.val
-                child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
-                child <- node$AddChildNode(child)
-                
-                #find the wins
-                if(child$name==endname){
-                    child$name <- paste(prefix,"-WIN ",child$name,sep='')
-                        if(list.out=TRUE){
-                            append(gamestate,list.winnable)->>list.winnable
-                        }
-                    wincount.minus<<-wincount.minus+1
-                    return() #win found, go to next gamestate
-                    
-                } else {
-                    if(child$name==startname){
-                        child$name <- paste(prefix,"+WIN ",child$name,sep='')
-                            if(list.out=TRUE){
-                                append(gamestate,list.winnable)->>list.winnable
-                            }
-                        wincount.plus<<-wincount.plus+1
-                        return() #win found, go to next gamestate
-                    }
-                }
-                Recall(child)    # recurse with child
-            }
-        }
-        have.kids(root)
-    }
-    if(list.out==TRUE){
-        list(paste("There are ", wincount.plus, " + winnable games in R^",length(thispile[[1]])),sep="",paste("There are ", wincount.minus, " - winnable games in R^",length(thispile[[1]]),sep=""),list.winnable)    
-    } else{
-        list(paste("There are ", wincount.plus, " + winnable games in R^",length(thispile[[1]]),sep=""),paste("There are ", wincount.minus, " - winnable games in R^",length(thispile[[1]]),sep=""))
-    }
-}
-
-
-####################
-# cdrwincountloop()
-# purpose : get freeze counts for multiple n, defined from a:b
-
-cdrwincountloop<- function(a,b){
-    winlist<-list()
-    for(i in a:b){
-        winlist[[length(winlist)+1]]<-cdrwincount(i)
-    }
-    names(winlist)<-paste("R^",a:b,sep='')
-    winlist
-}
-
-
-
-####################
 # function:     cdrfreezecount()
 # purpose:      Counts the number of gamestates that have no moves in a given R^n
 # parameters:	n: which n in R^n to consider 
@@ -292,9 +202,11 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
         setwd(paste(pile[[1]],collapse=' '))
         for (i in pile){
             filename<-paste(cdrindex(i),"    ",paste(i,collapse=' '),".txt",sep="")
-            write.table(cdrtree(i), filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
+            write.table(cdrtree(i,make.igraph=FALSE), filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
         }
-    }
+    } else{
+        
+    
     
     if(forrest.type=='image'){
         if(dir.exists(dir.out)==FALSE){
@@ -367,6 +279,7 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
                 dev.off()
             }
         }
+    }
     }
     setwd(wd)
 }
