@@ -133,10 +133,10 @@ makecdrfiles <- function(m,n){
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss; gen.bincomb; gen.cdrpile
 require(combinat)
-makecdsfiles <- function(m,n){
+makecdrfiles <- function(m,n){
     
     for(i in n:m){
-        gen.cdspile(i)->temp
+        gen.cdrpile(i)->temp
         lapply(temp, write, paste("S^",i,".txt",sep=""), append=TRUE, ncolumns=length(x)) 
     }
     
