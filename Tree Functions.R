@@ -55,8 +55,8 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
     thispile<-gen.cdrpile(length(root.value))
     root <- Node$new('v0')  
     root$value <- root.value  
-
-        root$name <- paste("ROOT",paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
+    
+    root$name <- paste("ROOT",paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
     
     #recursive function that produces children and names them appropriately
     have.kids <- function(node) {
@@ -65,7 +65,7 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
         for (pointer in pointers) {
             #append pointer to precisely ordered pointer list
             append(paste(pointer[1],pointer[2],sep=','),pointerlist)->>pointerlist
-
+            
             child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
             
             #This isn't currently necessary and adds tons of time for large piles
@@ -76,7 +76,7 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
             child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
             namevar<-child$name
             prefix<-name.node2() #designate a unique prefix in case of a duplicate (required for igraph)
-        
+            
             
             child <- node$AddChildNode(child)
             
@@ -94,7 +94,7 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
                     if((sum(child$value < 0) == length(root.value)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
                         child$name <- paste(prefix,"DRAW ",namevar,sep='')
                     } else {
-
+                        
                         #catch the other duplicate cases that aren't listed above
                         if((child$name %in% templist == TRUE) || (child$name == root$name)){
                             child$name <- paste(prefix,"DUP ",namevar,sep='')
@@ -146,7 +146,7 @@ cdrfreezecount <- function(n){
     for(i in pile){
         thepointers<-cdrpointers(i)
         if(length(thepointers)<1){
-        count<-count+1    
+            count<-count+1    
         }
     }
     count
@@ -159,7 +159,7 @@ cdrfreezecount <- function(n){
 cdrfreezecountloop<- function(a,b){
     freezelist<-list()
     for(i in a:b){
-    freezelist[[length(freezelist)+1]]<-cdrfreezecount(i)
+        freezelist[[length(freezelist)+1]]<-cdrfreezecount(i)
     }
     names(freezelist)<-paste("R^",a:b,sep='')
     freezelist
@@ -211,82 +211,82 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
         }
     } else{
         
-    
-    
-    if(forrest.type=='image'){
-        if(dir.exists(dir.out)==FALSE){
-            dir.create(dir.out)
-        } 
-        setwd(dir.out)
         
-        dir.create(paste(pile[[1]],collapse=' '))
-        setwd(paste(pile[[1]],collapse=' '))
-        for (i in pile){
+        
+        if(forrest.type=='image'){
+            if(dir.exists(dir.out)==FALSE){
+                dir.create(dir.out)
+            } 
+            setwd(dir.out)
             
-            if(length(cdrpointers(i))>0){
-                thisindex<-which(sapply(pile, identical, i ))
-                filenamevar<-paste(thisindex,"    ",paste(i,collapse=' '),".pdf",sep="")
-                b <- cdrtree(i)
-                progress.counter<<-progress.counter+1
-                #educated adjustment of label.cex to minimize overlaps in output.
-                if(ecount(b)>0){
-                    V(b)$label.cex<-1
-                }
-                if(ecount(b)>3){
-                    V(b)$label.cex<-.9
-                }
-                if(ecount(b)>6){
-                    V(b)$label.cex<-.8
-                }
-                if(ecount(b)>12){
-                    V(b)$label.cex<-.7
-                    E(b)$label.cex<-.7
-                }
-                if(ecount(b)>17){
-                    V(b)$label.cex<-.6
-                    E(b)$label.cex<-.7
-                }
-                if(ecount(b)>23){
-                    V(b)$label.cex<-.5
-                    E(b)$label.cex<-.6
-                }
-                if(ecount(b)>32){
-                    V(b)$label.cex<-.4
-                    E(b)$label.cex<-.45
-                }
-                if(ecount(b)>45){
-                    V(b)$label.cex<-.3
-                    E(b)$label.cex<-.3
-                }
-                if(ecount(b)>62){
-                    V(b)$label.cex<-.2
-                    E(b)$label.cex<-.2
-                }
-                if(ecount(b)>78){
-                    V(b)$label.cex<-.1
-                    E(b)$label.cex<-.1
-                }
-                if(ecount(b)>96){
-                    V(b)$label.cex<-.05
-                    E(b)$label.cex<-.07
-                }
-                if(ecount(b)>140){
-                    V(b)$label.cex<-.025
-                    E(b)$label.cex<-.035
-                }
-                if(ecount(b)>168){
-                    V(b)$label.cex<-.016
-                    E(b)$label.cex<-.022
-                }
+            dir.create(paste(pile[[1]],collapse=' '))
+            setwd(paste(pile[[1]],collapse=' '))
+            for (i in pile){
                 
-                pdf(filenamevar, height=11, width=8.5)
-                plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," children"))
-                dev.off()
+                if(length(cdrpointers(i))>0){
+                    thisindex<-which(sapply(pile, identical, i ))
+                    filenamevar<-paste(thisindex,"    ",paste(i,collapse=' '),".pdf",sep="")
+                    b <- cdrtree(i)
+                    progress.counter<<-progress.counter+1
+                    #educated adjustment of label.cex to minimize overlaps in output.
+                    if(ecount(b)>0){
+                        V(b)$label.cex<-1
+                    }
+                    if(ecount(b)>3){
+                        V(b)$label.cex<-.9
+                    }
+                    if(ecount(b)>6){
+                        V(b)$label.cex<-.8
+                    }
+                    if(ecount(b)>12){
+                        V(b)$label.cex<-.7
+                        E(b)$label.cex<-.7
+                    }
+                    if(ecount(b)>17){
+                        V(b)$label.cex<-.6
+                        E(b)$label.cex<-.7
+                    }
+                    if(ecount(b)>23){
+                        V(b)$label.cex<-.5
+                        E(b)$label.cex<-.6
+                    }
+                    if(ecount(b)>32){
+                        V(b)$label.cex<-.4
+                        E(b)$label.cex<-.45
+                    }
+                    if(ecount(b)>45){
+                        V(b)$label.cex<-.3
+                        E(b)$label.cex<-.3
+                    }
+                    if(ecount(b)>62){
+                        V(b)$label.cex<-.2
+                        E(b)$label.cex<-.2
+                    }
+                    if(ecount(b)>78){
+                        V(b)$label.cex<-.1
+                        E(b)$label.cex<-.1
+                    }
+                    if(ecount(b)>96){
+                        V(b)$label.cex<-.05
+                        E(b)$label.cex<-.07
+                    }
+                    if(ecount(b)>140){
+                        V(b)$label.cex<-.025
+                        E(b)$label.cex<-.035
+                    }
+                    if(ecount(b)>168){
+                        V(b)$label.cex<-.016
+                        E(b)$label.cex<-.022
+                    }
+                    
+                    pdf(filenamevar, height=11, width=8.5)
+                    plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," children"))
+                    dev.off()
+                }
+                outline<-paste(progress.counter, " out of ",pile.length," complete.",sep='')
+                print(outline)
             }
-            outline<-paste(progress.counter, " out of ",pile.length," complete.",sep='')
-            print(outline)
         }
-    }
     }
     setwd(wd)
 }
