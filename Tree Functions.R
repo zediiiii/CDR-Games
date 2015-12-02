@@ -1,7 +1,6 @@
 ####################
 # Helper functions for cdrtree
 
-
 #Two helper functions iterate through "vn" where n is a sequential number. Used for keeping names distinct.
 #which is required for plotting igraph objects.
 nodeNamer <- function() {
