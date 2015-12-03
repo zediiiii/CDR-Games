@@ -411,7 +411,7 @@ cdrwincount <- function(pile,...){
 
 ###############
 # cdrwincountlooper, use a vector of numbers to define which gamestate lists are processed
-# Example : cdrwincountlooper(2:6)
+# Example : cdrwincountlooper(c(2,6))
 
 cdrwincountlooper<-function(range){
     outlist<-list()
