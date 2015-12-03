@@ -419,4 +419,5 @@ cdrwincountlooper<-function(range){
         wincounted<-cdrwincount(gen.cdrpile(i))
         outlist[[length(outlist)+1]]<-paste0("R^",i," has ",wincounted," winnable gamestates.")
     }
+    outlist
 }
