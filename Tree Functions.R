@@ -404,20 +404,20 @@ cdrwincount <- function(pile,...){
         have.kids(root)
     }
     
-    output.text<-paste("R^",pile.length," has ",win.counter," winnable gamestates.") 
+    output.text<-paste0("R^",pile.length," has ",win.counter," winnable gamestates.") 
     return(output.text)
 }
 
 
 ###############
 # cdrwincountlooper, use a vector of numbers to define which gamestate lists are processed
-# Example : cdrwincountlooper(c(2,6))
+# Example : cdrwincountlooper(c(2:6))
 
 cdrwincountlooper<-function(range){
     outlist<-list()
     for(i in range){
         wincounted<-cdrwincount(gen.cdrpile(i))
-        outlist[[length(outlist)+1]]<-paste0("R^",i," has ",wincounted," winnable gamestates.")
+        outlist[[length(outlist)+1]]<-wincounted
     }
     outlist
 }
