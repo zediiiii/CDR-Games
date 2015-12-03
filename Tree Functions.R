@@ -176,8 +176,6 @@ cdrfreezecountloop<- function(a,b){
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
 # Example:      cdrforrest(gen.cdrpile(4),forrest.type='text',dir.out='R_4 Text Trees')
-# NOTES:        presently, the text forrest is broken due to igraph export in cdrtree. 
-#               use another commit (~55) if you want to generate a text forrest for now.
 
 cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
     
@@ -326,4 +324,99 @@ cdrbiosphere <- function(range,...){
     require(igraph)
     cdrbiome(range,forrest.type="text")
     cdrbiome(range,forrest.type="image")
+}
+
+####################
+# function:     cdrwincount()
+# purpose:      Counts how many distinct gamestates have at least one win in their tree
+# parameters:	pile: The list of gamestates. Generate a list using gen.cdrpile()
+# Author:       Joshua Watson Dec 2015
+# Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
+# Example:      cdrwincount(gen.cdrpile(5))
+
+require(combinat)
+
+cdrwincount <- function(pile,...){
+    
+    win.counter<<-0
+    countswitch<<-0
+    as.numeric(length(pile[[1]]))->pile.length
+    #cdr text forrest
+    
+    ######begin cdr tree maker
+    
+    #recursive function that produces children and names them appropriately
+    have.kids <- function(node) {
+        
+        pointers <- tryCatch({cdrpointers(node$value)}, error=function(e) return( list() ))
+        if (!length(pointers)) return()
+        pointersleft<-length(pointers)
+        # for(pointer in pointers){
+        # countswitch<-0
+        
+        # while(pointersleft>0 && countswitch==0){
+        while(pointersleft>0){
+            # countswitch<-0
+            child.val <- cdrmove(node$value, pointers[[pointersleft]])  #make the cdr move on the first pointer
+            #child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
+            
+            child <- Node$new('nameofthisnode') #give the new node a unique name
+            child$value <- child.val
+            child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
+            
+            child <- node$AddChildNode(child)
+            
+            #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
+            endname<-paste(unlist(tail(pile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
+            startname<-paste(unlist(pile[[1]]),collapse=' ') # this is the name of the first element in the pile
+            
+            if(child$name==endname){
+                #   child$name <- paste("-WIN ",child$name,sep='')
+                win.counter<<-win.counter+1
+                countswitch<<-1
+                #    print(win.counter)
+                #    print("is a --------- win counter")
+                
+                return(eval.parent(parse(text="next"),1))
+                #full name is only needed for naming edges with pointers
+            } 
+            if(child$name==startname){
+                #   child$name <- paste("+WIN ",child$name,sep='')
+                win.counter<<-win.counter+1
+                countswitch<<-1
+                #   print(win.counter)
+                #   print("is a ++++++++ win counter")
+                
+                return(eval.parent(parse(text="next"),1))
+                #full name is only needed for naming edges with pointers
+            } 
+            
+            pointersleft<-pointersleft-1
+            Recall(child)    # recurse with child
+        }
+        
+    }
+    #####end cdr tree maker
+    for(gamestate in pile){
+        root <- Node$new('v0')  
+        root$value <- gamestate
+        root$name <- paste(paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
+        have.kids(root)
+    }
+    
+    output.text<-paste("R^",pile.length," has ",win.counter," winnable gamestates.") 
+    return(output.text)
+}
+
+
+###############
+# cdrwincountlooper, use a vector of numbers to define which gamestate lists are processed
+# Example : cdrwincountlooper(2:6)
+
+cdrwincountlooper<-function(range){
+    outlist<-list()
+    for(i in range){
+        wincounted<-cdrwincount(gen.cdrpile(i))
+        outlist[[length(outlist)+1]]<-paste0("R^",i," has ",wincounted," winnable gamestates.")
+    }
 }
