@@ -408,5 +408,7 @@ cdrwincountlooper<-function(range){
         wincounted<-cdrwincount(gen.cdrpile(i))
         outlist[[length(outlist)+1]]<-wincounted
     }
+    filename<-paste0("Winnable Game Stats.txt")
+            write.table(outlist, filename,quote = FALSE,col.names = FALSE, row.names = FALSE)
     outlist
 }
