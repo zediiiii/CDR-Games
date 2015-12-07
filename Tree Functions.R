@@ -67,9 +67,6 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
       
       child.val <- cdrmove(node$value, pointer)  #make the cdr move on the first pointer
       
-      #This isn't currently necessary and adds tons of time for large piles
-      #child.index<-cdrindex(child.val)
-      
       child <- Node$new(name.node()) #give the new node a unique name
       child$value <- child.val
       child$name <- paste(unlist(child$value),collapse=' ')  # Name it correctly 
@@ -128,10 +125,23 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
   }
 }
 
-# This could be useful.
-# count_isomorphisms(as.igraph(cdrtree(x[[877]])),as.igraph(cdrtree(x[[1877]])))
+# Use the following function to test for isomorphisms between two graphs
+# count_isomorphisms(cdrtree(x[[4]]),cdrtree(x[[18]]))
 
-####################
+### Experimental (not yet working) function to find which gamestate are isomorphic to a particular gamestate in a game state list
+#helper function to allow lapply and fix g1 or g2
+isomorphisms.helper<-function(g1,g2){
+g1<-cdrtree(g1)
+g2<-cdrtree(g2)
+count_isomorphisms(g1,g2)
+}
+which.isomorphisms<-function(gamestate){
+lapply(gen.cdrpile(length(gamestate)),isomorphisms.helper, g2=gamestate)
+}
+
+
+
+##############
 # function:     cdrfreezecount()
 # purpose:      Counts the number of gamestates that have no moves in a given R^n
 # parameters:	n: which n in R^n to consider 
