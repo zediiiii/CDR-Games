@@ -219,12 +219,13 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
       dir.create(paste(pile[[1]],collapse=' '))
       setwd(paste(pile[[1]],collapse=' '))
       for (i in pile){
+        progress.counter<-progress.counter+1
         
         if(length(cdrpointers(i))>0){
           thisindex<-which(sapply(pile, identical, i ))
           filenamevar<-paste(thisindex,"    ",paste(i,collapse=' '),".pdf",sep="")
           b <- cdrtree(i)
-          progress.counter<-progress.counter+1
+          
           #educated adjustment of label.cex to minimize overlaps in output.
           if(ecount(b)>0){
             V(b)$label.cex<-1
