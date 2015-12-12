@@ -2,8 +2,8 @@
 # Notes about this script
 # An initial misconception led to the use of the word "pile" to represent the list of all game state permutations which we
 # denote R_n. For the sake of preserving function, the word "pile" has been left in various places in the script.
-# Also note that this package is does not follow some global variable rules that CRAN enforces, and could 
-# theoreticall break some packages - though this is unlikely. 
+# Also note that this package does not follow some global variable rules that CRAN enforces, and could 
+# theoretically break some packages - though this is unlikely. 
 
 ####################
 # Helper functions for cdrtree function
