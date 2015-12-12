@@ -1,5 +1,12 @@
 ####################
-# Helper functions for cdrtree
+# Notes about this script
+# An initial misconception led to the use of the word "pile" to represent the list of all game state permutations which we
+# denote R_n. For the sake of preserving function, the word "pile" has been left in various places in the script.
+# Also note that this package is does not follow some global variable rules that CRAN enforces, and could 
+# theoreticall break some packages - though this is unlikely. 
+
+####################
+# Helper functions for cdrtree function
 
 #Two helper functions iterate through "vn" where n is a sequential number. Used for keeping names distinct.
 #which is required for plotting igraph objects.
@@ -76,7 +83,7 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
       
       child <- node$AddChildNode(child)
       
-      #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
+      #identical ending name handling catches duplicates. Names WIN+, WIN-, and fixed point (FP) outcomes
       endname<-paste(unlist(tail(thispile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
       startname<-paste(unlist(thispile[[1]]),collapse=' ') # this is the name of the first element in the pile
       
@@ -88,7 +95,7 @@ cdrtree <- function(root.value,make.igraph=TRUE,...) {
         } else {
           #if all negative (!win) or all positive (!win) then it is terminal and could be a duplicate, rename it for igraph
           if((sum(child$value < 0) == length(root.value)) || ((sum(child$value < 0 ) == 0 && !(child$name==endname) ) )){
-            child$name <- paste(prefix,"DRAW ",namevar,sep='')
+            child$name <- paste(prefix,"FP ",namevar,sep='')
           } else {
             
             #catch the other duplicate cases that aren't listed above
@@ -143,8 +150,8 @@ lapply(gen.cdrpile(length(gamestate)),isomorphisms.helper, g2=gamestate)
 
 ##############
 # function:     cdrfreezecount()
-# purpose:      Counts the number of gamestates that have no moves in a given R^n
-# parameters:	n: which n in R^n to consider 
+# purpose:      Counts the number of gamestates that have no moves in a given R_n
+# parameters:	n: which n in R_n to consider 
 # Author:       Joshua Watson Nov 2015
 # Dependancies: sort.listss.r ; gen.bincomb.r; cdrpointers; cdrmove; cdrindex; gen.cdrpile
 # Example:      
@@ -170,7 +177,7 @@ cdrfreezecountloop<- function(a,b){
   for(i in a:b){
     freezelist[[length(freezelist)+1]]<-cdrfreezecount(i)
   }
-  names(freezelist)<-paste("R^",a:b,sep='')
+  names(freezelist)<-paste("R_",a:b,sep='')
   freezelist
 }
 
@@ -288,7 +295,7 @@ cdrforrest <- function(pile,forrest.type='image', dir.out='cdrforrest',...){
           }
           
           pdf(filenamevar, height=11, width=8.5)
-          plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R^ ",length(i),"_",thisindex," has ",ecount(b)," children"))
+          plot(b,layout=layout.reingold.tilford,rescale=TRUE,vertex.shape='none',vertex.color='white',main=paste("R_ ",length(i),"_",thisindex," has ",ecount(b)," children"))
           dev.off()
         }
         outline<-paste(progress.counter, " out of ",pile.length," complete.",sep='')
@@ -374,7 +381,7 @@ cdrwincount <- function(pile,...){
       
       child <- node$AddChildNode(child)
       
-      #identical ending name handling catches duplicates. Names WIN+, WIN-, and DRAW outcomes
+      #identical ending name handling catches duplicates. Names WIN+, WIN-, and fixed point outcomes
       endname<-paste(unlist(tail(pile, n=1)[[1]]),collapse=' ') #this is the name of the last element in the pile
       startname<-paste(unlist(pile[[1]]),collapse=' ') # this is the name of the first element in the pile
       
@@ -399,12 +406,12 @@ cdrwincount <- function(pile,...){
     root$value <- gamestate
     root$name <- paste(paste(unlist(root$value),collapse=' ')) #name this the same as the value collapsed in type char
     progress.counter<<-progress.counter+1
-    outline<-paste(progress.counter, " out of ",pile.length," in R^",element.length," complete.",sep='') #What to print in the progress indicator
+    outline<-paste(progress.counter, " out of ",pile.length," in R_",element.length," complete.",sep='') #What to print in the progress indicator
     print(outline)
     have.kids(root)
     
   }
-  output.text<-paste0("R^",element.length," has ",win.counter," winnable gamestates.") 
+  output.text<-paste0("R_",element.length," has ",win.counter," winnable gamestates.") 
   rm(progress.counter, inherits=TRUE)
   rm(win.counter, inherits=TRUE)
   return(output.text)
